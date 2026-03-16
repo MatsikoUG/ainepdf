@@ -122,40 +122,49 @@
                 }
             });
             
-             document.getElementById('watermarkBtn').addEventListener('click', async () => {
-                 if (!currentFile) return;
-                 
-                 try {
-                     progressContainer.classList.remove('hidden');
-                     const pdfOps = new AinePdf.PdfOperations();
-                     
-                     const text = document.getElementById('watermarkText').value;
-                     const fontSize = parseInt(document.getElementById('fontSize').value);
-                     const opacity = parseInt(document.getElementById('opacity').value) / 100;
-                     const angle = parseInt(document.getElementById('rotation').value);
-                     const colorHex = document.getElementById('color').value;
-                     
-                     const result = await pdfOps.addWatermark(currentFile, text, {
-                         fontSize, opacity, angle,
-                         color: hexToRgb(colorHex)
-                     });
-                     
-                     // Show preview
-                     watermarkOptions.classList.add('hidden');
-                     actions.classList.add('hidden');
-                     previewSection.classList.remove('hidden');
-                     
-                     // Create preview using PDF.js
-                     await createWatermarkPreview(result);
-                     
-                     progressBar.style.width = '100%';
-                     AinePdf.showToast('Watermark added!', 'success');
-                 } catch (error) {
-                     AinePdf.showToast('Error: ' + error.message, 'error');
-                 } finally {
-                     setTimeout(() => progressContainer.classList.add('hidden'), 2000);
-                 }
-             });
+            document.getElementById('watermarkBtn').addEventListener('click', async () => {
+                  if (!currentFile) return;
+                  
+                  try {
+                      progressContainer.classList.remove('hidden');
+                      const pdfOps = new AinePdf.PdfOperations();
+                      
+                      const text = document.getElementById('watermarkText').value;
+                      const fontSize = parseInt(document.getElementById('fontSize').value);
+                      const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                      const angle = parseInt(document.getElementById('rotation').value);
+                      const colorHex = document.getElementById('color').value;
+                      
+                      console.log('Starting watermark process...');
+                      const result = await pdfOps.addWatermark(currentFile, text, {
+                          fontSize, opacity, angle,
+                          color: hexToRgb(colorHex)
+                      });
+                      console.log('Watermark process completed, result type:', typeof result);
+                      console.log('Result is Blob:', result instanceof Blob);
+                      
+                       // Show preview
+                      watermarkOptions.classList.add('hidden');
+                      actions.classList.add('hidden');
+                      console.log('About to show previewSection');
+                      previewSection.classList.remove('hidden');
+                      previewSection.style.display = 'block'; // Ensure it's visible
+                      console.log('previewSection classList after removing hidden:', previewSection.classList);
+                      console.log('previewSection is actually hidden:', previewSection.classList.contains('hidden'));
+                      console.log('previewSection style.display:', previewSection.style.display);
+                      
+                      // Create preview using PDF.js
+                      await createWatermarkPreview(result);
+                      
+                      progressBar.style.width = '100%';
+                      AinePdf.showToast('Watermark added!', 'success');
+                  } catch (error) {
+                      console.error('Error in watermark process:', error);
+                      AinePdf.showToast('Error: ' + error.message, 'error');
+                  } finally {
+                      setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+                  }
+              });
              
              // Download watermarked PDF
              document.getElementById('downloadWatermarkBtn').addEventListener('click', async () => {
@@ -196,26 +205,38 @@
                  return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
              }
              
-             async function createWatermarkPreview(pdfBlob) {
-                 try {
-                     // Create a blob URL for preview
-                     const blobUrl = URL.createObjectURL(pdfBlob);
-                     
-                     // Create iframe for preview
-                     const previewContainer = document.getElementById('watermarkPreview');
-                     previewContainer.innerHTML = `
-                         <iframe 
-                             src="${blobUrl}" 
-                             style="width: 100%; height: 500px; border: none;"
-                             title="Watermarked PDF Preview"
-                         ></iframe>
-                     `;
-                 } catch (error) {
-                     console.error('Error creating preview:', error);
-                     const previewContainer = document.getElementById('watermarkPreview');
-                     previewContainer.innerHTML = `<p class="text-red-500">Error generating preview</p>`;
-                 }
-             }
+              async function createWatermarkPreview(pdfBlob) {
+                  try {
+                      console.log('Creating watermark preview, blob size:', pdfBlob.size);
+                      // Create a blob URL for preview
+                      const blobUrl = URL.createObjectURL(pdfBlob);
+                      console.log('Blob URL created:', blobUrl);
+                      
+                      // Create iframe for preview
+                      const previewContainer = document.getElementById('watermarkPreview');
+                      console.log('Preview container found:', previewContainer);
+                      previewContainer.innerHTML = `
+                          <iframe 
+                              src="${blobUrl}" 
+                              style="width: 100%; height: 500px; border: none;"
+                              title="Watermarked PDF Preview"
+                          ></iframe>
+                      `;
+                      console.log('Preview iframe created');
+                      
+                      // Also show the preview section explicitly
+                      previewSection.style.display = 'block';
+                      previewSection.classList.remove('hidden');
+                      console.log('Preview section forced to show');
+                  } catch (error) {
+                      console.error('Error creating preview:', error);
+                      const previewContainer = document.getElementById('watermarkPreview');
+                      previewContainer.innerHTML = `<p class="text-red-500">Error generating preview</p>`;
+                      // Still try to show the section even if there's an error
+                      previewSection.style.display = 'block';
+                      previewSection.classList.remove('hidden');
+                  }
+              }
             
             document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
             if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
