@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Watermark – AinePdf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
+            <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
+        </div>
+
+        <div id="dropZone" class="drop-zone mb-8">
+            <svg class="drop-zone-icon w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF here</p>
+        </div>
+
+        <div id="watermarkOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Watermark Settings</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Watermark Text</label>
+                    <input id="watermarkText" type="text" placeholder="Enter watermark text" class="input-field" value="CONFIDENTIAL">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Font Size: <span id="fontSizeVal">48</span></label>
+                    <input id="fontSize" type="range" min="12" max="120" value="48" class="range-slider w-full">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Opacity: <span id="opacityVal">30</span>%</label>
+                    <input id="opacity" type="range" min="10" max="100" value="30" class="range-slider w-full">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Rotation: <span id="rotationVal">45</span>°</label>
+                    <input id="rotation" type="range" min="0" max="360" value="45" class="range-slider w-full">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Color</label>
+                    <input id="color" type="color" value="#808080" class="w-full h-10 rounded cursor-pointer">
+                </div>
+            </div>
+        </div>
+
+        <div id="progressContainer" class="hidden mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                    <div id="progressBar" class="h-full bg-red-500 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center">
+            <button id="watermarkBtn" class="btn-primary">Add Watermark</button>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Files processed locally.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const dropZone = document.getElementById('dropZone');
+            const watermarkOptions = document.getElementById('watermarkOptions');
+            const actions = document.getElementById('actions');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            
+            let currentFile = null;
+            
+            // Update slider values
+            ['fontSize', 'opacity', 'rotation'].forEach(id => {
+                document.getElementById(id).addEventListener('input', (e) => {
+                    document.getElementById(id + 'Val').textContent = e.target.value;
+                });
+            });
+            
+            new AinePdf.DropZone(dropZone, {
+                accept: ['.pdf'],
+                maxFiles: 1,
+                onFilesSelected: (files) => {
+                    currentFile = files[0];
+                    watermarkOptions.classList.remove('hidden');
+                    actions.classList.remove('hidden');
+                }
+            });
+            
+            document.getElementById('watermarkBtn').addEventListener('click', async () => {
+                if (!currentFile) return;
+                
+                try {
+                    progressContainer.classList.remove('hidden');
+                    const pdfOps = new AinePdf.PdfOperations();
+                    
+                    const text = document.getElementById('watermarkText').value;
+                    const fontSize = parseInt(document.getElementById('fontSize').value);
+                    const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                    const angle = parseInt(document.getElementById('rotation').value);
+                    const colorHex = document.getElementById('color').value;
+                    
+                    const result = await pdfOps.addWatermark(currentFile, text, {
+                        fontSize, opacity, angle,
+                        color: hexToRgb(colorHex)
+                    });
+                    
+                    progressBar.style.width = '100%';
+                    AinePdf.downloadBlob(result, 'watermarked.pdf');
+                    AinePdf.showToast('Watermark added!', 'success');
+                } catch (error) {
+                    AinePdf.showToast('Error: ' + error.message, 'error');
+                } finally {
+                    setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+                }
+            });
+            
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
+            }
+            
+            document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+            if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+        });
+    </script>
+</body>
+</html>

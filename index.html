@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AinePdf - Free Online PDF Tools</title>
+    <meta name="description" content="Free online PDF toolkit - merge, split, edit, convert, and manipulate PDF files entirely in your browser. No uploads, 100% privacy.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="./index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <div class="hidden md:flex space-x-1">
+                <a href="./index.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 border-b-2 border-transparent hover:border-red-500">All Tools</a>
+                <a href="./pages/about.html" class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">About</a>
+            </div>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <section class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Free Online PDF Tools
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+                Merge, split, edit, convert, and manipulate PDF files entirely in your browser. 
+                No uploads, no login, 100% privacy-focused.
+            </p>
+            <a href="./pages/all-tools.html" class="btn-primary inline-block px-8 py-4 text-lg">
+                Explore All Tools
+            </a>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="grid gap-8 mb-16">
+            <div class="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Merge PDF -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Merge PDF</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Combine multiple PDF files into a single document quickly and easily.
+                    </p>
+                    <a href="./pages/merge-pdf.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                        Try it →
+                    </a>
+                </div>
+
+                <!-- Split PDF -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Split PDF</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Extract specific pages or split your PDF into multiple files.
+                    </p>
+                    <a href="./pages/split-pdf.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                        Try it →
+                    </a>
+                </div>
+
+                <!-- Compress PDF -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Compress PDF</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Reduce file size while maintaining quality for easier sharing.
+                    </p>
+                    <a href="./pages/compress-pdf.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                        Try it →
+                    </a>
+                </div>
+
+                 <!-- Edit PDF -->
+                 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                     <div class="flex items-center mb-4">
+                         <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Edit PDF</h3>
+                     </div>
+                     <p class="text-gray-600 dark:text-gray-300 mb-4">
+                         Add text, shapes, images, and annotations to your PDF documents. Drag and drop elements to reposition them. Delete and add pages as needed. Upload multiple images at once. Drag and drop files directly onto the PDF. Zoom in/out for better viewing.
+                     </p>
+                     <a href="./pages/edit-pdf.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                         Try it →
+                     </a>
+                 </div>
+
+                <!-- Convert -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Convert Files</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Convert PDF to JPG, PNG, and vice versa. Also convert images to PDF.
+                    </p>
+                    <a href="./pages/convert.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                        Try it →
+                    </a>
+                </div>
+
+                <!-- Security -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 tool-card hover:shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2zm0-4h5a1 1 0 010 2H6a1 1 0 010-2z" clip-rule="evenodd"/></svg>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Security Tools</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">
+                        Add watermarks, page numbers, unlock PDFs, and more.
+                    </p>
+                    <a href="./pages/all-tools.html" class="text-red-600 hover:text-red-800 dark:hover:text-red-400 font-medium">
+                        Explore →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="bg-white dark:bg-gray-800 rounded-xl p-8 mb-16">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                How It Works
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                    <svg class="w-12 h-12 mx-auto mb-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">1. Select Tool</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Choose from our collection of PDF tools - all free and easy to use.
+                    </p>
+                </div>
+                <div>
+                    <svg class="w-12 h-12 mx-auto mb-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">2. Process Locally</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        All processing happens in your browser - your files never leave your computer.
+                    </p>
+                </div>
+                <div>
+                    <svg class="w-12 h-12 mx-auto mb-4 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">3. Download Result</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Instantly download your processed file with no watermarks or restrictions.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Badge -->
+        <section class="text-center py-12">
+            <div class="inline-flex items-center px-6 py-3 bg-red-50 dark:bg-red-900/20 rounded-full text-red-600 dark:text-red-400 font-medium">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0v4a1 1 0 11-2 0V6a1 1 0 011-1h4a1 1 0 010 2h-3v2z" clip-rule="evenodd"/></svg>
+                100% Privacy - Files processed locally in your browser
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Made with ❤️ for privacy.</p>
+        <div class="mt-2">
+            <!-- Ad Container -->
+            <div id="ad-container" class="w-full text-center">
+                <!-- Ad will be loaded here by the ad service -->
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="./pages/about.html" class="text-gray-300 hover:text-white mx-2">About</a>
+            <span class="mx-2 text-gray-500">|</span>
+            <a href="./pages/all-tools.html" class="text-gray-300 hover:text-white mx-2">All Tools</a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <!-- Adsetrra Ad Script -->
+    <script type="text/javascript">
+        atOptions = {
+            'key' : 'ebd56aef5b8dbe6af64b13b87d885d4f',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+        };
+        document.write('<scr' + 'ipt type="text/javascript" src="http' + (location.protocol === 'https:' ? 's' : '') + '://www.effectivegatecpm.com/n5bvidp4ub/go.php"></scr' + 'ipt>');
+    </script>
+</body>
+</html>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit PDF – AinePdf</title>
+    <meta name="description" content="Edit PDF files online. Add text, annotations, shapes, and more.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M11 5l4 4-4 4"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <div class="hidden md:flex space-x-1">
+                <a href="../index.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">All Tools</a>
+                <a href="edit-pdf.html" class="px-3 py-2 text-sm text-red-500 bg-red-50">Edit PDF</a>
+                <a href="merge-pdf.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">Merge</a>
+                <a href="split-pdf.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">Split</a>
+            </div>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Edit PDF</h1>
+            <p class="text-gray-600 dark:text-gray-300">Add text, shapes, annotations to your PDF. All processing happens in your browser.</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div id="uploadSection">
+            <div id="dropZone" class="drop-zone mb-8">
+                <svg class="drop-zone-icon w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF here</p>
+                <p class="text-sm text-gray-500">or click to browse</p>
+            </div>
+        </div>
+
+        <!-- Editor Section -->
+        <div id="editorSection" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Toolbar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Add</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="addTextBtn" class="annotation-tool flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                <span class="text-xs">Text</span>
+                            </button>
+                            <button id="addRectBtn" class="annotation-tool flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/></svg>
+                                <span class="text-xs">Rectangle</span>
+                            </button>
+                            <button id="addEllipseBtn" class="annotation-tool flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+                                <span class="text-xs">Ellipse</span>
+                            </button>
+                            <button id="addLineBtn" class="annotation-tool flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20L20 4"/></svg>
+                                <span class="text-xs">Line</span>
+                            </button>
+                            <button id="addImageBtn" class="annotation-tool flex flex-col items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg>
+                                <span class="text-xs">Image</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Options -->
+                    <div id="textOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Text Options</h3>
+                        <input id="textInput" type="text" placeholder="Enter text..." class="input-field mb-3">
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Font Size</label>
+                        <input id="fontSize" type="range" min="8" max="72" value="16" class="range-slider mb-3">
+                        <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Color</label>
+                        <input id="textColor" type="color" value="#000000" class="w-full h-10 rounded cursor-pointer">
+                        <button id="applyTextBtn" class="btn-primary w-full mt-3">Add Text</button>
+                    </div>
+                    
+                     <!-- Shape Options -->
+                     <div id="shapeOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+                         <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Shape Options</h3>
+                         <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Fill Color</label>
+                         <input id="fillColor" type="color" value="#ff0000" class="w-full h-10 rounded cursor-pointer mb-3">
+                         <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Border Color</label>
+                         <input id="borderColor" type="color" value="#000000" class="w-full h-10 rounded cursor-pointer mb-3">
+                         <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">Border Width</label>
+                         <input id="borderWidth" type="range" min="1" max="10" value="2" class="range-slider">
+                         <button id="applyShapeBtn" class="btn-primary w-full mt-3">Add Shape</button>
+                     </div>
+                     
+                      <!-- Image Options -->
+                      <div id="imageOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-4">
+                          <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Image Options</h3>
+                          <input id="imageInput" type="file" accept="image/*" multiple class="w-full mb-4">
+                          <div class="space-y-2">
+                              <label class="block text-sm text-gray-600 dark:text-gray-400">Width</label>
+                              <input id="imageWidth" type="range" min="10" max="500" value="100" class="range-slider mb-2">
+                          </div>
+                          <div class="space-y-2">
+                              <label class="block text-sm text-gray-600 dark:text-gray-400">Height</label>
+                              <input id="imageHeight" type="range" min="10" max="500" value="100" class="range-slider mb-2">
+                          </div>
+                          <button id="applyImageBtn" class="btn-primary w-full mt-3">Add Images</button>
+                      </div>
+                    
+                      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                          <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Page Actions</h3>
+                          <div class="space-y-2">
+                              <div class="flex items-center justify-between">
+                                  <button id="prevPage" class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-sm">Previous Page</button>
+                                  <button id="nextPage" class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-sm">Next Page</button>
+                              </div>
+                              <div class="flex items-center justify-between">
+                                  <button id="deletePageBtn" class="px-3 py-2 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 text-sm">Delete Page</button>
+                                  <button id="addPageBtn" class="px-3 py-2 bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded hover:bg-green-200 dark:hover:bg-green-800 text-sm">Add Blank Page</button>
+                              </div>
+                              <div class="flex items-center space-x-3">
+                                  <button id="zoomOutBtn" class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-sm">-</button>
+                                  <span id="zoomLevel" class="w-10 text-center text-sm font-medium text-gray-600 dark:text-gray-300">100%</span>
+                                  <button id="zoomInBtn" class="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-sm">+</button>
+                              </div>
+                              <p id="pageInfo" class="text-center text-sm text-gray-600 dark:text-gray-400">Page 1 of 1</p>
+                          </div>
+                      </div>
+                </div>
+                
+                 <!-- Preview -->
+                 <div class="lg:col-span-2">
+                     <div id="previewContainer" class="canvas-container bg-gray-200 dark:bg-gray-700 rounded-lg overflow-auto flex items-start justify-center p-4">
+                         <canvas id="pdfCanvas" class="shadow-lg"></canvas>
+                     </div>
+                 </div>
+                
+                <!-- Page Thumbnails -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-3">Pages</h3>
+                        <div id="pageThumbs" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                <button id="downloadBtn" class="btn-primary">Download PDF</button>
+                <button id="newFileBtn" class="btn-secondary">New File</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Files never leave your device.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const dropZone = document.getElementById('dropZone');
+            const uploadSection = document.getElementById('uploadSection');
+            const editorSection = document.getElementById('editorSection');
+            const pdfCanvas = document.getElementById('pdfCanvas');
+            const ctx = pdfCanvas.getContext('2d');
+            
+            let currentFile = null;
+let pdfDoc = null;
+let currentPage = 1;
+let totalPages = 0;
+let pdfToImage = null;
+let annotations = [];
+let isDragging = false;
+let draggedAnnotationIndex = -1;
+let dragStartX = 0;
+let dragStartY = 0;
+let zoomLevel = 1.0; // 1.0 = 100%
+            
+            new AinePdf.DropZone(dropZone, {
+                accept: ['.pdf'],
+                maxFiles: 1,
+                onFilesSelected: async (files) => {
+                    currentFile = files[0];
+                    await loadPdf();
+                },
+                onFileError: (file, error) => AinePdf.showToast(error, 'error')
+            });
+            
+            async function loadPdf() {
+                try {
+                    pdfToImage = new AinePdf.PdfToImage();
+                    pdfDoc = await pdfToImage.loadPdf(currentFile);
+                    totalPages = pdfDoc.numPages;
+                    
+                    uploadSection.classList.add('hidden');
+                    editorSection.classList.remove('hidden');
+                    
+                    renderThumbnails();
+                    await renderPage(currentPage);
+                } catch (error) {
+                    AinePdf.showToast('Error loading PDF: ' + error.message, 'error');
+                }
+            }
+            
+             async function renderPage(pageNum) {
+                  const page = await pdfDoc.getPage(pageNum);
+                  
+                  // Calculate base scale to fit the container width while maintaining aspect ratio
+                  const containerWidth = pdfCanvas.parentElement.clientWidth;
+                  const containerHeight = pdfCanvas.parentElement.clientHeight;
+                  
+                  // Get the page dimensions
+                  const pageRect = page.getViewport({ scale: 1 });
+                  
+                  // Calculate scale to fit width with some padding
+                  let baseScale = Math.min(
+                      (containerWidth - 40) / pageRect.width,  // 40px padding (20px each side)
+                      (containerHeight - 40) / pageRect.height
+                  );
+                  
+                  // Ensure minimum scale of 0.5 and maximum of 3
+                  baseScale = Math.max(0.5, Math.min(3, baseScale));
+                  
+                  // Apply zoom level
+                  const finalScale = baseScale * zoomLevel;
+                  
+                  const viewport = page.getViewport({ scale: finalScale });
+                  
+                  pdfCanvas.width = viewport.width;
+                  pdfCanvas.height = viewport.height;
+                  
+                  await page.render({
+                      canvasContext: ctx,
+                      viewport: viewport
+                  }).promise;
+                  
+                  // Draw annotations
+                  annotations.filter(a => a.page === pageNum).forEach(drawAnnotation);
+                  
+                  // Set up drag event listeners for annotations
+                  setupDragListeners();
+                  
+                  // Set up file drop listeners for canvas
+                  setupCanvasDropListeners();
+                  
+                  document.getElementById('pageInfo').textContent = `Page ${pageNum} of ${totalPages}`;
+                  document.getElementById('zoomLevel').textContent = `${Math.round(zoomLevel * 100)}%`;
+              }
+            
+            function renderThumbnails() {
+                const container = document.getElementById('pageThumbs');
+                container.innerHTML = '';
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    const thumb = document.createElement('div');
+                    thumb.className = `p-2 rounded cursor-pointer text-center ${i === currentPage ? 'bg-red-100 dark:bg-red-900' : 'bg-gray-100 dark:bg-gray-700'}`;
+                    thumb.textContent = i;
+                    thumb.addEventListener('click', () => {
+                        currentPage = i;
+                        renderThumbnails();
+                        renderPage(i);
+                    });
+                    container.appendChild(thumb);
+                }
+            }
+            
+             function drawAnnotation(annotation) {
+                 ctx.fillStyle = annotation.color || '#000000';
+                 ctx.strokeStyle = annotation.borderColor || '#000000';
+                 ctx.lineWidth = annotation.borderWidth || 1;
+                 
+                 if (annotation.type === 'text') {
+                     ctx.font = `${annotation.fontSize || 16}px Arial`;
+                     ctx.fillText(annotation.text, annotation.x, annotation.y);
+                 } else if (annotation.type === 'rectangle') {
+                     ctx.fillRect(annotation.x, annotation.y, annotation.width, annotation.height);
+                 } else if (annotation.type === 'ellipse') {
+                     ctx.beginPath();
+                     ctx.ellipse(annotation.x + annotation.width/2, annotation.y + annotation.height/2, annotation.width/2, annotation.height/2, 0, 0, 2 * Math.PI);
+                     ctx.fill();
+                 } else if (annotation.type === 'line') {
+                     ctx.beginPath();
+                     ctx.moveTo(annotation.x, annotation.y);
+                     ctx.lineTo(annotation.x + annotation.width, annotation.y + annotation.height);
+                     ctx.stroke();
+                 } else if (annotation.type === 'image') {
+                     const img = new Image();
+                     img.src = URL.createObjectURL(annotation.file);
+                     img.onload = () => {
+                         ctx.drawImage(img, annotation.x, annotation.y, annotation.width, annotation.height);
+                     };
+                 }
+             }
+            
+            // Tool buttons
+            document.getElementById('addTextBtn').addEventListener('click', () => {
+                document.getElementById('textOptions').classList.toggle('hidden');
+                document.getElementById('shapeOptions').classList.add('hidden');
+                document.getElementById('imageOptions').classList.add('hidden');
+            });
+            
+            document.getElementById('addRectBtn').addEventListener('click', () => {
+                document.getElementById('shapeOptions').classList.toggle('hidden');
+                document.getElementById('textOptions').classList.add('hidden');
+                document.getElementById('imageOptions').classList.add('hidden');
+            });
+            
+            document.getElementById('addEllipseBtn').addEventListener('click', () => {
+                document.getElementById('shapeOptions').classList.toggle('hidden');
+                document.getElementById('textOptions').classList.add('hidden');
+                document.getElementById('imageOptions').classList.add('hidden');
+            });
+            
+            document.getElementById('addImageBtn').addEventListener('click', () => {
+                document.getElementById('imageOptions').classList.toggle('hidden');
+                document.getElementById('textOptions').classList.add('hidden');
+                document.getElementById('shapeOptions').classList.add('hidden');
+            });
+            
+            // Add text
+            document.getElementById('applyTextBtn').addEventListener('click', async () => {
+                const text = document.getElementById('textInput').value;
+                if (!text) {
+                    AinePdf.showToast('Please enter some text', 'error');
+                    return;
+                }
+                
+                const fontSize = parseInt(document.getElementById('fontSize').value);
+                const color = document.getElementById('textColor').value;
+                
+                annotations.push({
+                    type: 'text',
+                    page: currentPage,
+                    text: text,
+                    x: 100,
+                    y: 200,
+                    fontSize: fontSize,
+                    color: color
+                });
+                
+                await renderPage(currentPage);
+                document.getElementById('textInput').value = '';
+                AinePdf.showToast('Text added', 'success');
+            });
+            
+            // Add shape
+            document.getElementById('applyShapeBtn').addEventListener('click', async () => {
+                const fillColor = document.getElementById('fillColor').value;
+                const borderColor = document.getElementById('borderColor').value;
+                const borderWidth = parseInt(document.getElementById('borderWidth').value);
+                
+                annotations.push({
+                    type: 'rectangle',
+                    page: currentPage,
+                    x: 100,
+                    y: 200,
+                    width: 150,
+                    height: 100,
+                    color: fillColor,
+                    borderColor: borderColor,
+                    borderWidth: borderWidth
+                });
+                
+                await renderPage(currentPage);
+                AinePdf.showToast('Shape added', 'success');
+            });
+            
+             // Add image
+            document.getElementById('applyImageBtn').addEventListener('click', async () => {
+                const imageInput = document.getElementById('imageInput');
+                if (!imageInput.files || imageInput.files.length === 0) {
+                    AinePdf.showToast('Please select an image', 'error');
+                    return;
+                }
+                
+                const width = parseInt(document.getElementById('imageWidth').value);
+                const height = parseInt(document.getElementById('imageHeight').value);
+                
+                // Process each selected image
+                for (let i = 0; i < imageInput.files.length; i++) {
+                    const file = imageInput.files[i];
+                    if (!file.type.match('image.*')) {
+                        continue; // Skip invalid files
+                    }
+                    
+                    annotations.push({
+                        type: 'image',
+                        page: currentPage,
+                        file: file,
+                        x: 100 + (i * 20), // Stagger multiple images
+                        y: 200 + (i * 20),
+                        width: width,
+                        height: height
+                    });
+                }
+                
+                await renderPage(currentPage);
+                imageInput.value = '';
+                AinePdf.showToast('Images added', 'success');
+            });
+            
+             // Page navigation
+              document.getElementById('prevPage').addEventListener('click', async () => {
+                  if (currentPage > 1) {
+                      currentPage--;
+                      await renderPage(currentPage);
+                      renderThumbnails();
+                  }
+              });
+              
+              document.getElementById('nextPage').addEventListener('click', async () => {
+                  if (currentPage < totalPages) {
+                      currentPage++;
+                      await renderPage(currentPage);
+                      renderThumbnails();
+                  }
+              });
+              
+              // Zoom controls
+              document.getElementById('zoomInBtn').addEventListener('click', () => {
+                  zoomLevel = Math.min(zoomLevel + 0.25, 3.0); // Max 300%
+                  renderPage(currentPage);
+              });
+              
+              document.getElementById('zoomOutBtn').addEventListener('click', () => {
+                  zoomLevel = Math.max(zoomLevel - 0.25, 0.5); // Min 50%
+                  renderPage(currentPage);
+              });
+             
+             // Delete page
+             document.getElementById('deletePageBtn').addEventListener('click', async () => {
+                 if (totalPages <= 1) {
+                     AinePdf.showToast('Cannot delete the last page', 'error');
+                     return;
+                 }
+                 
+                 try {
+                     const pdfLib = await loadPdfLib();
+                     const pdfDoc = await pdfLib.PDFDocument.load(await currentFile.arrayBuffer());
+                     
+                     // Remove the current page
+                     pdfDoc.removePage(currentPage - 1);
+                     
+                     // Update current page if we deleted the last page
+                     if (currentPage > totalPages) {
+                         currentPage = totalPages;
+                     }
+                     
+                     // Save and update
+                     const pdfBytes = await pdfDoc.save();
+                     currentFile = new File([pdfBytes], currentFile.name, { type: 'application/pdf' });
+                     
+                     // Reload PDF info
+                     await loadPdf();
+                     
+                     AinePdf.showToast('Page deleted', 'success');
+                 } catch (error) {
+                     console.error('Error:', error);
+                     AinePdf.showToast('Error deleting page: ' + error.message, 'error');
+                 }
+             });
+             
+             // Add blank page
+             document.getElementById('addPageBtn').addEventListener('click', async () => {
+                 try {
+                     const pdfLib = await loadPdfLib();
+                     const pdfDoc = await pdfLib.PDFDocument.load(await currentFile.arrayBuffer());
+                     
+                     // Add a blank page (A4 size: 595.5 x 842 points)
+                     pdfDoc.addPage([595.5, 842]);
+                     
+                     // Save and update
+                     const pdfBytes = await pdfDoc.save();
+                     currentFile = new File([pdfBytes], currentFile.name, { type: 'application/pdf' });
+                     
+                     // Reload PDF info
+                     await loadPdf();
+                     
+                     // Go to the newly added page
+                     currentPage = totalPages + 1;
+                     
+                     AinePdf.showToast('Page added', 'success');
+                 } catch (error) {
+                     console.error('Error:', error);
+                     AinePdf.showToast('Error adding page: ' + error.message, 'error');
+                 }
+             });
+            
+             // Download
+             document.getElementById('downloadBtn').addEventListener('click', async () => {
+                 try {
+                     // Load the original document
+                     const pdfLib = await loadPdfLib();
+                     let pdfDoc = await pdfLib.PDFDocument.load(await currentFile.arrayBuffer());
+                     
+                     // Apply all annotations
+                     for (const ann of annotations) {
+                         if (ann.type === 'text') {
+                             const hexColor = ann.color;
+                             const rgbColor = hexToRgb(hexColor);
+                             
+                             const helveticaFont = await pdfLib.embedFont(pdfLib.StandardFonts.Helvetica);
+                             const page = pdfDoc.getPage(ann.page - 1);
+                             
+                             page.drawText(ann.text, {
+                                 x: ann.x,
+                                 y: ann.y,
+                                 size: ann.fontSize,
+                                 font: helveticaFont,
+                                 color: pdfLib.rgb(rgbColor[0] / 255, rgbColor[1] / 255, rgbColor[2] / 255)
+                             });
+                         } else if (ann.type === 'rectangle') {
+                             const fillColor = hexToRgb(ann.fillColor);
+                             const borderColor = hexToRgb(ann.borderColor);
+                             
+                             const page = pdfDoc.getPage(ann.page - 1);
+                             
+                             page.drawRectangle({
+                                 x: ann.x,
+                                 y: ann.y,
+                                 width: ann.width,
+                                 height: ann.height,
+                                 borderWidth: ann.borderWidth,
+                                 borderColor: pdfLib.rgb(borderColor[0] / 255, borderColor[1] / 255, borderColor[2] / 255),
+                                 color: pdfLib.rgb(fillColor[0] / 255, fillColor[1] / 255, fillColor[2] / 255)
+                             });
+                         } else if (ann.type === 'image') {
+                             // Handle image annotation
+                             const imageType = ann.file.type;
+                             let pdfImage;
+                             
+                             if (imageType === 'image/png') {
+                                 pdfImage = await pdfDoc.embedPng(await ann.file.arrayBuffer());
+                             } else {
+                                 pdfImage = await pdfDoc.embedJpg(await ann.file.arrayBuffer());
+                             }
+                             
+                             const page = pdfDoc.getPage(ann.page - 1);
+                             
+                             page.drawImage(pdfImage, {
+                                 x: ann.x,
+                                 y: ann.y,
+                                 width: ann.width,
+                                 height: ann.height
+                             });
+                         }
+                     }
+                     
+                     // Save the modified PDF
+                     const pdfBytes = await pdfDoc.save();
+                     
+                     AinePdf.downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), 'edited.pdf');
+                     AinePdf.showToast('PDF downloaded!', 'success');
+                 } catch (error) {
+                     console.error('Error:', error);
+                     AinePdf.showToast('Error: ' + error.message, 'error');
+                 }
+             });
+            
+            // New file
+            document.getElementById('newFileBtn').addEventListener('click', () => {
+                location.reload();
+            });
+            
+             function hexToRgb(hex) {
+                 const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                 return result ? [
+                     parseInt(result[1], 16),
+                     parseInt(result[2], 16),
+                     parseInt(result[3], 16)
+                 ] : [0, 0, 0];
+             }
+             
+             function setupDragListeners() {
+                 // Remove existing listeners to avoid duplicates
+                 pdfCanvas.removeEventListener('mousedown', startDragging);
+                 pdfCanvas.removeEventListener('mousemove', drag);
+                 pdfCanvas.removeEventListener('mouseup', stopDragging);
+                 pdfCanvas.removeEventListener('mouseleave', stopDragging);
+                 
+                 // Add new listeners
+                 pdfCanvas.addEventListener('mousedown', startDragging);
+                 pdfCanvas.addEventListener('mousemove', drag);
+                 pdfCanvas.addEventListener('mouseup', stopDragging);
+                 pdfCanvas.addEventListener('mouseleave', stopDragging);
+             }
+             
+             function startDragging(e) {
+                 const rect = pdfCanvas.getBoundingClientRect();
+                 const scaleX = pdfCanvas.width / rect.width;
+                 const scaleY = pdfCanvas.height / rect.height;
+                 
+                 const canvasX = (e.clientX - rect.left) * scaleX;
+                 const canvasY = (e.clientY - rect.top) * scaleY;
+                 
+                 // Find which annotation was clicked (if any)
+                 for (let i = annotations.length - 1; i >= 0; i--) {
+                     const ann = annotations[i];
+                     if (ann.page !== currentPage) continue;
+                     
+                     let hit = false;
+                     if (ann.type === 'text') {
+                         // For text, we'll use a rough bounding box
+                         hit = (canvasX >= ann.x && canvasX <= ann.x + 100 && 
+                                canvasY >= ann.y - 20 && canvasY <= ann.y + 20);
+                     } else if (ann.type === 'rectangle' || ann.type === 'ellipse') {
+                         hit = (canvasX >= ann.x && canvasX <= ann.x + ann.width &&
+                                canvasY >= ann.y && canvasY <= ann.y + ann.height);
+                     } else if (ann.type === 'line') {
+                         // Simple hit detection for line
+                         hit = (Math.abs(canvasX - ann.x) < 10 && Math.abs(canvasY - ann.y) < 10);
+                     } else if (ann.type === 'image') {
+                         hit = (canvasX >= ann.x && canvasX <= ann.x + ann.width &&
+                                canvasY >= ann.y && canvasY <= ann.y + ann.height);
+                     }
+                     
+                     if (hit) {
+                         isDragging = true;
+                         draggedAnnotationIndex = i;
+                         dragStartX = canvasX - ann.x;
+                         dragStartY = canvasY - ann.y;
+                         pdfCanvas.style.cursor = 'grabbing';
+                         break;
+                     }
+                 }
+             }
+             
+             function drag(e) {
+                 if (!isDragging || draggedAnnotationIndex === -1) return;
+                 
+                 const rect = pdfCanvas.getBoundingClientRect();
+                 const scaleX = pdfCanvas.width / rect.width;
+                 const scaleY = pdfCanvas.height / rect.height;
+                 
+                 const canvasX = (e.clientX - rect.left) * scaleX;
+                 const canvasY = (e.clientY - rect.top) * scaleY;
+                 
+                 const ann = annotations[draggedAnnotationIndex];
+                 ann.x = canvasX - dragStartX;
+                 ann.y = canvasY - dragStartY;
+                 
+                 // Keep annotation within reasonable bounds
+                 ann.x = Math.max(0, Math.min(ann.x, pdfCanvas.width - 50));
+                 ann.y = Math.max(0, Math.min(ann.y, pdfCanvas.height - 50));
+                 
+                 // Re-render the page to show the dragged annotation
+                 renderPage(currentPage);
+             }
+             
+              function stopDragging() {
+                  isDragging = false;
+                  if (draggedAnnotationIndex !== -1) {
+                      pdfCanvas.style.cursor = 'grab';
+                  }
+                  draggedAnnotationIndex = -1;
+              }
+              
+              function setupCanvasDropListeners() {
+                  // Remove existing listeners to avoid duplicates
+                  pdfCanvas.removeEventListener('dragover', canvasDragOver);
+                  pdfCanvas.removeEventListener('dragleave', canvasDragLeave);
+                  pdfCanvas.removeEventListener('drop', canvasDrop);
+                  
+                  // Add new listeners
+                  pdfCanvas.addEventListener('dragover', canvasDragOver);
+                  pdfCanvas.addEventListener('dragleave', canvasDragLeave);
+                  pdfCanvas.addEventListener('drop', canvasDrop);
+              }
+              
+              function canvasDragOver(e) {
+                  e.preventDefault();
+                  pdfCanvas.classList.add('drag-over');
+              }
+              
+              function canvasDragLeave(e) {
+                  pdfCanvas.classList.remove('drag-over');
+              }
+              
+              function canvasDrop(e) {
+                  e.preventDefault();
+                  pdfCanvas.classList.remove('drag-over');
+                  
+                  const dt = e.dataTransfer;
+                  const files = dt.files;
+                  
+                  // Handle image files dropped on canvas
+                  if (files && files.length > 0) {
+                      // Filter for image files
+                      const imageFiles = Array.from(files).filter(file => 
+                          file.type && file.type.match('image.*')
+                      );
+                      
+                      if (imageFiles.length > 0) {
+                          // Process each image file
+                          const width = parseInt(document.getElementById('imageWidth').value);
+                          const height = parseInt(document.getElementById('imageHeight').value);
+                          
+                          for (let i = 0; i < imageFiles.length; i++) {
+                              const file = imageFiles[i];
+                              
+                              annotations.push({
+                                  type: 'image',
+                                  page: currentPage,
+                                  file: file,
+                                  x: 100 + (annotations.length * 20), // Stagger based on existing annotations
+                                  y: 100 + (annotations.length * 20),
+                                  width: width,
+                                  height: height
+                              });
+                          }
+                          
+                          renderPage(currentPage).then(() => {
+                              AinePdf.showToast(`${imageFiles.length} image(s) added via drag and drop`, 'success');
+                          });
+                      }
+                  }
+                  
+                  // Handle PDF files dropped on canvas
+                  const pdfFiles = Array.from(files).filter(file => 
+                      file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+                  );
+                  
+                  if (pdfFiles.length > 0) {
+                      // For simplicity, we'll just load the first PDF file
+                      // In a more advanced implementation, we might merge or replace
+                      const file = pdfFiles[0];
+                      
+                      currentFile = file;
+                      loadPdf().then(() => {
+                          AinePdf.showToast('PDF loaded via drag and drop', 'success');
+                      }).catch(error => {
+                          AinePdf.showToast('Error loading PDF: ' + error.message, 'error');
+                      });
+                  }
+              }
+            
+            // Dark mode
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+            
+            if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+        });
+    </script>
+</body>
+</html>

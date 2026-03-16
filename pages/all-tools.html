@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All PDF Tools – AinePdf</title>
+    <meta name="description" content="Complete list of free online PDF tools. Merge, split, edit, compress, convert PDFs.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <div class="hidden md:flex space-x-1">
+                <a href="all-tools.html" class="px-3 py-2 text-sm text-red-500 bg-red-50">All Tools</a>
+                <a href="merge-pdf.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">Merge</a>
+                <a href="split-pdf.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">Split</a>
+                <a href="convert.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">Convert</a>
+            </div>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">All PDF Tools</h1>
+            <p class="text-gray-600 dark:text-gray-300">Every tool you need to work with PDFs, completely free.</p>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Organize & Edit</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <a href="merge-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-red-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Merge PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Combine multiple PDFs into one</p>
+            </a>
+            <a href="split-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-orange-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Split PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Split PDF into multiple files</p>
+            </a>
+            <a href="compress-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-yellow-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Compress PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Reduce PDF file size</p>
+            </a>
+            <a href="extract-pages.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-purple-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Extract Pages</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Extract specific pages</p>
+            </a>
+            <a href="edit-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-green-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Edit PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Add text, shapes, annotations</p>
+            </a>
+            <a href="rotate-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-indigo-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Rotate PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Rotate pages by 90/180/270°</p>
+            </a>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Convert</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <a href="pdf-to-jpg.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-teal-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">PDF to JPG</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Convert PDF to JPEG</p>
+            </a>
+            <a href="jpg-to-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-blue-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">JPG to PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Convert images to PDF</p>
+            </a>
+            <a href="pdf-to-png.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-emerald-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">PDF to PNG</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Convert PDF to PNG</p>
+            </a>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Security & Other</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <a href="add-watermark.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-pink-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Add Watermark</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Add text watermark</p>
+            </a>
+            <a href="add-page-numbers.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-cyan-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Add Page Numbers</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Number your pages</p>
+            </a>
+            <a href="unlock-pdf.html" class="tool-card bg-white dark:bg-gray-800 rounded-xl p-6 hover:shadow-xl transition-all border-2 border-transparent hover:border-rose-400">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Unlock PDF</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Remove password</p>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+</html>

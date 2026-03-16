@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge PDF – AinePdf</title>
+    <meta name="description" content="Merge multiple PDF files into a single document. Free online tool.">
+    <meta property="og:title" content="Merge PDF – AinePdf">
+    <meta property="og:description" content="Combine multiple PDFs into one file. Fast, free, and secure.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: { 500: '#ef4444', 600: '#dc2626' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2l5 5h-5V4zM8.5 13a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                        <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="../index.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">All Tools</a>
+                    <a href="merge-pdf.html" class="px-3 py-2 rounded-md text-sm font-medium text-red-500 bg-red-50 dark:bg-red-900/20">Merge PDF</a>
+                    <a href="split-pdf.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Split PDF</a>
+                    <a href="edit-pdf.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Edit PDF</a>
+                    <a href="convert.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">Convert</a>
+                </div>
+                <div class="flex items-center">
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+                        <svg id="sunIcon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1z" clip-rule="evenodd"/></svg>
+                        <svg id="moonIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                    </button>
+                    <button id="mobileMenuBtn" class="md:hidden p-2 ml-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="tool-container">
+        <div class="tool-header">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Merge PDF</h1>
+            <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Combine multiple PDF files into a single document. Arrange the order by dragging files.</p>
+        </div>
+
+        <!-- Drop Zone -->
+        <div id="dropZone" class="drop-zone mb-8">
+            <svg class="drop-zone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF files here</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">or click to browse</p>
+        </div>
+
+        <!-- File List -->
+        <div id="fileList" class="hidden mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div id="filesContainer" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div id="progressContainer" class="hidden mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Merging PDFs...</span>
+                    <span id="progressPercent" class="text-sm text-gray-500">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center">
+            <button id="mergeBtn" class="btn-primary flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Merge PDFs
+            </button>
+            <button id="clearBtn" class="btn-secondary">Clear All</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+            <p>© 2024 AinePdf. All rights reserved. Files are processed locally and never uploaded to any server.</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('dropZone');
+            const fileList = document.getElementById('fileList');
+            const filesContainer = document.getElementById('filesContainer');
+            const actions = document.getElementById('actions');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const mergeBtn = document.getElementById('mergeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            let files = [];
+            const pdfOps = new AinePdf.PdfOperations();
+            
+            // Initialize drop zone
+            const dz = new AinePdf.DropZone(dropZone, {
+                accept: ['.pdf'],
+                maxFiles: 20,
+                onFilesSelected: (selectedFiles) => {
+                    files = [...files, ...selectedFiles];
+                    renderFileList();
+                },
+                onFileError: (file, error) => {
+                    AinePdf.showToast(error, 'error');
+                }
+            });
+            
+            function renderFileList() {
+                if (files.length === 0) {
+                    fileList.classList.add('hidden');
+                    actions.classList.add('hidden');
+                    return;
+                }
+                
+                fileList.classList.remove('hidden');
+                actions.classList.remove('hidden');
+                
+                filesContainer.innerHTML = files.map((file, index) => `
+                    <div class="file-item" data-index="${index}">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                            </svg>
+                            <div>
+                                <p class="file-item-name">${file.name}</p>
+                                <p class="file-item-size">${AinePdf.formatFileSize(file.size)}</p>
+                            </div>
+                        </div>
+                        <button class="remove-file text-gray-400 hover:text-red-500" data-index="${index}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                `).join('');
+                
+                // Add remove handlers
+                document.querySelectorAll('.remove-file').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.currentTarget.dataset.index);
+                        files.splice(index, 1);
+                        renderFileList();
+                    });
+                });
+            }
+            
+            // Merge button
+            mergeBtn.addEventListener('click', async () => {
+                if (files.length < 2) {
+                    AinePdf.showToast('Please select at least 2 PDF files', 'error');
+                    return;
+                }
+                
+                try {
+                    progressContainer.classList.remove('hidden');
+                    mergeBtn.disabled = true;
+                    
+                    // Update progress
+                    let progress = 0;
+                    const progressInterval = setInterval(() => {
+                        progress += 10;
+                        if (progress > 90) progress = 90;
+                        progressBar.style.width = progress + '%';
+                        progressPercent.textContent = progress + '%';
+                    }, 200);
+                    
+                    const mergedPdf = await pdfOps.mergePdfs(files);
+                    
+                    clearInterval(progressInterval);
+                    progressBar.style.width = '100%';
+                    progressPercent.textContent = '100%';
+                    
+                    AinePdf.downloadBlob(mergedPdf, 'merged.pdf');
+                    AinePdf.showToast('PDFs merged successfully!', 'success');
+                    
+                } catch (error) {
+                    console.error(error);
+                    AinePdf.showToast('Error merging PDFs: ' + error.message, 'error');
+                } finally {
+                    mergeBtn.disabled = false;
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                        progressBar.style.width = '0%';
+                        progressPercent.textContent = '0%';
+                    }, 2000);
+                }
+            });
+            
+            // Clear button
+            clearBtn.addEventListener('click', () => {
+                files = [];
+                renderFileList();
+            });
+            
+            // Dark mode toggle
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+                const sunIcon = document.getElementById('sunIcon');
+                const moonIcon = document.getElementById('moonIcon');
+                if (document.documentElement.classList.contains('dark')) {
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                } else {
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                }
+            });
+            
+            // Check dark mode on load
+            if (localStorage.getItem('darkMode') === 'true' || 
+                (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('sunIcon').classList.remove('hidden');
+                document.getElementById('moonIcon').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

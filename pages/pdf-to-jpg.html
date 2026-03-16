@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to JPG – AinePdf</title>
+    <meta name="description" content="Convert PDF to JPG images online. Extract pages as images.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <div class="hidden md:flex space-x-1">
+                <a href="../index.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">All Tools</a>
+                <a href="convert.html" class="px-3 py-2 text-sm text-red-500 bg-red-50">Convert</a>
+            </div>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">PDF to JPG</h1>
+            <p class="text-gray-600 dark:text-gray-300">Convert PDF pages to high-quality JPEG images.</p>
+        </div>
+
+        <div id="dropZone" class="drop-zone mb-8">
+            <svg class="drop-zone-icon w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF here</p>
+            <p class="text-sm text-gray-500">or click to browse</p>
+        </div>
+
+        <div id="pageSelection" class="hidden mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-medium text-gray-900 dark:text-white">Select Pages to Convert</span>
+                    <button id="selectAllPages" class="text-sm text-red-500 hover:underline">Select All</button>
+                </div>
+                <div id="pageThumbs" class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-48 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <div id="progressContainer" class="hidden mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-700 dark:text-gray-300">Converting...</span>
+                    <span id="progressPercent" class="text-gray-500">0%</span>
+                </div>
+                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+                    <div id="progressBar" class="h-full bg-red-500 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center">
+            <button id="convertBtn" class="btn-primary">Convert to JPG</button>
+            <button id="clearBtn" class="btn-secondary">Clear</button>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Files processed locally.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const dropZone = document.getElementById('dropZone');
+            const pageSelection = document.getElementById('pageSelection');
+            const pageThumbs = document.getElementById('pageThumbs');
+            const actions = document.getElementById('actions');
+            const convertBtn = document.getElementById('convertBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            let currentFile = null;
+            let pdfToImage = null;
+            let totalPages = 0;
+            let selectedPages = new Set();
+            
+            new AinePdf.DropZone(dropZone, {
+                accept: ['.pdf'],
+                maxFiles: 1,
+                onFilesSelected: async (files) => {
+                    currentFile = files[0];
+                    await loadPdf();
+                }
+            });
+            
+            async function loadPdf() {
+                pdfToImage = new AinePdf.PdfToImage();
+                await pdfToImage.loadPdf(currentFile);
+                totalPages = pdfToImage.pdfDoc.numPages;
+                
+                pageSelection.classList.remove('hidden');
+                actions.classList.remove('hidden');
+                
+                pageThumbs.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    selectedPages.add(i);
+                    const thumb = document.createElement('div');
+                    thumb.className = 'page-thumbnail aspect-[3/4] bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center cursor-pointer selected bg-red-100';
+                    thumb.dataset.page = i;
+                    thumb.innerHTML = `<span class="text-sm">${i}</span>`;
+                    thumb.addEventListener('click', () => {
+                        if (selectedPages.has(i)) {
+                            selectedPages.delete(i);
+                            thumb.classList.remove('selected', 'bg-red-100');
+                        } else {
+                            selectedPages.add(i);
+                            thumb.classList.add('selected', 'bg-red-100');
+                        }
+                    });
+                    pageThumbs.appendChild(thumb);
+                }
+            }
+            
+            document.getElementById('selectAllPages').addEventListener('click', () => {
+                if (selectedPages.size === totalPages) {
+                    selectedPages.clear();
+                    document.querySelectorAll('.page-thumbnail').forEach(el => el.classList.remove('selected', 'bg-red-100'));
+                } else {
+                    selectedPages.clear();
+                    for (let i = 1; i <= totalPages; i++) selectedPages.add(i);
+                    document.querySelectorAll('.page-thumbnail').forEach(el => el.classList.add('selected', 'bg-red-100'));
+                }
+            });
+            
+            convertBtn.addEventListener('click', async () => {
+                if (selectedPages.size === 0) {
+                    AinePdf.showToast('Select at least one page', 'error');
+                    return;
+                }
+                
+                try {
+                    progressContainer.classList.remove('hidden');
+                    convertBtn.disabled = true;
+                    
+                    const pages = Array.from(selectedPages).sort((a, b) => a - b);
+                    let completed = 0;
+                    
+                    for (const pageNum of pages) {
+                        const jpgData = await pdfToImage.convertPageToJpg(pageNum, 2);
+                        AinePdf.downloadDataUrl(jpgData, `page-${pageNum}.jpg`);
+                        completed++;
+                        const progress = Math.round((completed / pages.length) * 100);
+                        progressBar.style.width = progress + '%';
+                        progressPercent.textContent = progress + '%';
+                    }
+                    
+                    AinePdf.showToast('Conversion complete!', 'success');
+                } catch (error) {
+                    AinePdf.showToast('Error: ' + error.message, 'error');
+                } finally {
+                    convertBtn.disabled = false;
+                    setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+                }
+            });
+            
+            document.getElementById('clearBtn').addEventListener('click', () => location.reload());
+            
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+            
+            if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+        });
+    </script>
+</body>
+</html>
