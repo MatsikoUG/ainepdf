@@ -21,11 +21,27 @@
         </div>
     </nav>
 
-    <main class="max-w-3xl mx-auto px-4 py-12">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
-            <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
-        </div>
+     <main class="max-w-3xl mx-auto px-4 py-12">
+         <div class="text-center mb-8">
+             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
+             <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
+         </div>
+         
+         <!-- Preview Section -->
+         <div id="previewSection" class="hidden">
+             <div class="space-y-6">
+                 <div>
+                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
+                     <div id="watermarkPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+                         <!-- PDF preview will be rendered here -->
+                     </div>
+                 </div>
+                 <div id="watermarkActions" class="flex flex-col sm:flex-row gap-4 justify-center">
+                     <button id="downloadWatermarkBtn" class="btn-primary">Download Watermarked PDF</button>
+                     <button id="newWatermarkBtn" class="btn-secondary">New File</button>
+                 </div>
+             </div>
+         </div>
 
         <div id="dropZone" class="drop-zone mb-8">
             <svg class="drop-zone-icon w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,38 +121,100 @@
                 }
             });
             
-            document.getElementById('watermarkBtn').addEventListener('click', async () => {
-                if (!currentFile) return;
-                
-                try {
-                    progressContainer.classList.remove('hidden');
-                    const pdfOps = new AinePdf.PdfOperations();
-                    
-                    const text = document.getElementById('watermarkText').value;
-                    const fontSize = parseInt(document.getElementById('fontSize').value);
-                    const opacity = parseInt(document.getElementById('opacity').value) / 100;
-                    const angle = parseInt(document.getElementById('rotation').value);
-                    const colorHex = document.getElementById('color').value;
-                    
-                    const result = await pdfOps.addWatermark(currentFile, text, {
-                        fontSize, opacity, angle,
-                        color: hexToRgb(colorHex)
-                    });
-                    
-                    progressBar.style.width = '100%';
-                    AinePdf.downloadBlob(result, 'watermarked.pdf');
-                    AinePdf.showToast('Watermark added!', 'success');
-                } catch (error) {
-                    AinePdf.showToast('Error: ' + error.message, 'error');
-                } finally {
-                    setTimeout(() => progressContainer.classList.add('hidden'), 2000);
-                }
-            });
+             document.getElementById('watermarkBtn').addEventListener('click', async () => {
+                 if (!currentFile) return;
+                 
+                 try {
+                     progressContainer.classList.remove('hidden');
+                     const pdfOps = new AinePdf.PdfOperations();
+                     
+                     const text = document.getElementById('watermarkText').value;
+                     const fontSize = parseInt(document.getElementById('fontSize').value);
+                     const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                     const angle = parseInt(document.getElementById('rotation').value);
+                     const colorHex = document.getElementById('color').value;
+                     
+                     const result = await pdfOps.addWatermark(currentFile, text, {
+                         fontSize, opacity, angle,
+                         color: hexToRgb(colorHex)
+                     });
+                     
+                     // Show preview
+                     watermarkOptions.classList.add('hidden');
+                     actions.classList.add('hidden');
+                     previewSection.classList.remove('hidden');
+                     
+                     // Create preview using PDF.js
+                     await createWatermarkPreview(result);
+                     
+                     progressBar.style.width = '100%';
+                     AinePdf.showToast('Watermark added!', 'success');
+                 } catch (error) {
+                     AinePdf.showToast('Error: ' + error.message, 'error');
+                 } finally {
+                     setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+                 }
+             });
+             
+             // Download watermarked PDF
+             document.getElementById('downloadWatermarkBtn').addEventListener('click', async () => {
+                 if (!currentFile) return;
+                 
+                 try {
+                     progressContainer.classList.remove('hidden');
+                     const pdfOps = new AinePdf.PdfOperations();
+                     
+                     const text = document.getElementById('watermarkText').value;
+                     const fontSize = parseInt(document.getElementById('fontSize').value);
+                     const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                     const angle = parseInt(document.getElementById('rotation').value);
+                     const colorHex = document.getElementById('color').value;
+                     
+                     const result = await pdfOps.addWatermark(currentFile, text, {
+                         fontSize, opacity, angle,
+                         color: hexToRgb(colorHex)
+                     });
+                     
+                     progressBar.style.width = '100%';
+                     AinePdf.downloadBlob(result, 'watermarked.pdf');
+                     AinePdf.showToast('Watermarked PDF downloaded!', 'success');
+                 } catch (error) {
+                     AinePdf.showToast('Error: ' + error.message, 'error');
+                 } finally {
+                     setTimeout(() => progressContainer.classList.add('hidden'), 2000);
+                 }
+             });
+             
+             // New file button
+             document.getElementById('newWatermarkBtn').addEventListener('click', () => {
+                 location.reload();
+             });
             
-            function hexToRgb(hex) {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
-            }
+             function hexToRgb(hex) {
+                 const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                 return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
+             }
+             
+             async function createWatermarkPreview(pdfBlob) {
+                 try {
+                     // Create a blob URL for preview
+                     const blobUrl = URL.createObjectURL(pdfBlob);
+                     
+                     // Create iframe for preview
+                     const previewContainer = document.getElementById('watermarkPreview');
+                     previewContainer.innerHTML = `
+                         <iframe 
+                             src="${blobUrl}" 
+                             style="width: 100%; height: 500px; border: none;"
+                             title="Watermarked PDF Preview"
+                         ></iframe>
+                     `;
+                 } catch (error) {
+                     console.error('Error creating preview:', error);
+                     const previewContainer = document.getElementById('watermarkPreview');
+                     previewContainer.innerHTML = `<p class="text-red-500">Error generating preview</p>`;
+                 }
+             }
             
             document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
             if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
