@@ -239,14 +239,18 @@
                 }
             });
             
-            // Check dark mode on load
-            if (localStorage.getItem('darkMode') === 'true' || 
-                (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('sunIcon').classList.remove('hidden');
-                document.getElementById('moonIcon').classList.add('hidden');
-            }
-        });
-    </script>
-</body>
+             // Check dark mode on load
+             if (localStorage.getItem('darkMode') === 'true' || 
+                 (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                 document.documentElement.classList.add('dark');
+                 document.getElementById('sunIcon').classList.remove('hidden');
+                 document.getElementById('moonIcon').classList.add('hidden');
+             }
+         });
+     </script>
+     <!-- Popunder Ad Unit (one per page) -->
+     <script src="https://pl28930473.effectivegatecpm.com/04/ac/c2/04acc2344ed019ba38e63d0153b521b2.js"></script>
+     <!-- Social Bar Ad Unit -->
+     <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
+ </body>
 </html>
