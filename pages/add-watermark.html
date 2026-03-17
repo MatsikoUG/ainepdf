@@ -23,7 +23,7 @@
         </div>
     </nav>
 
-    <main class="max-w-3xl mx-auto px-4 py-12">
+    <main class="max-w-4xl mx-auto px-4 py-12">
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
             <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
@@ -64,11 +64,11 @@
                     <input id="color" type="color" value="#808080" class="w-full h-10 rounded cursor-pointer">
                 </div>
             </div>
-        </div>
-
-        <!-- Actions -->
-        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <button id="watermarkBtn" class="btn-primary">Add Watermark</button>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                <button id="watermarkBtn" class="btn-primary">Apply Watermark</button>
+            </div>
         </div>
 
         <!-- Progress Container -->
@@ -81,29 +81,37 @@
             </div>
         </div>
 
-        <!-- Result Section -->
+        <!-- Result Section with Preview -->
         <div id="resultSection" class="hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-                <div class="mb-6">
-                    <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-                
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Watermark Added!</h2>
-                <p class="text-gray-600 dark:text-gray-300 mb-6">Your PDF has been watermarked successfully.</p>
-                
-                <button id="downloadBtn" class="btn-primary px-8 py-3 text-lg">
-                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    Download Watermarked PDF
-                </button>
-                
-                <div class="mt-4">
-                    <button id="newFileBtn" class="text-red-500 hover:text-red-600 text-sm">
-                        ← Add watermark to another file
+            <!-- Action Buttons -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <button id="editBtn" class="btn-secondary">
+                        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Edit Watermark
                     </button>
+                    <button id="downloadBtn" class="btn-primary">
+                        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Download
+                    </button>
+                    <button id="newFileBtn" class="btn-secondary">
+                        <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        New File
+                    </button>
+                </div>
+            </div>
+            
+            <!-- PDF Preview -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Preview</h3>
+                <div id="pdfPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden" style="height: 600px;">
+                    <!-- PDF iframe will be inserted here -->
                 </div>
             </div>
         </div>
@@ -123,7 +131,6 @@
     </footer>
 
     <script>
-        // Wait for PDF-lib to load
         document.addEventListener('DOMContentLoaded', async () => {
             // Wait for pdf-lib to be available
             if (typeof PDFLib === 'undefined') {
@@ -135,11 +142,7 @@
                             resolve();
                         }
                     }, 100);
-                    // Timeout after 10 seconds
-                    setTimeout(() => {
-                        clearInterval(checkLib);
-                        resolve();
-                    }, 10000);
+                    setTimeout(() => { clearInterval(checkLib); resolve(); }, 10000);
                 });
             }
             
@@ -148,13 +151,14 @@
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
             const watermarkOptions = document.getElementById('watermarkOptions');
-            const actions = document.getElementById('actions');
             const resultSection = document.getElementById('resultSection');
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
+            const pdfPreview = document.getElementById('pdfPreview');
             
             let currentFile = null;
             let watermarkedBlob = null;
+            let blobUrl = null;
             
             // Update slider values
             ['fontSize', 'opacity', 'rotation'].forEach(id => {
@@ -164,41 +168,27 @@
             });
             
             // Click on drop zone to browse
-            dropZone.addEventListener('click', () => {
-                fileInput.click();
-            });
+            dropZone.addEventListener('click', () => fileInput.click());
             
             // File input change
             fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFiles(e.target.files);
-                }
+                if (e.target.files.length > 0) handleFiles(e.target.files);
             });
             
             // Drag and drop
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('drag-over');
-            });
-            
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('drag-over');
-            });
-            
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-                handleFiles(e.dataTransfer.files);
-            });
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+            dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
             
             function handleFiles(files) {
                 const file = files[0];
                 if (file && file.name.toLowerCase().endsWith('.pdf')) {
                     currentFile = file;
                     watermarkOptions.classList.remove('hidden');
-                    actions.classList.remove('hidden');
                     resultSection.classList.add('hidden');
                     watermarkedBlob = null;
+                    if (blobUrl) URL.revokeObjectURL(blobUrl);
+                    blobUrl = null;
                     console.log('File selected:', file.name);
                 } else {
                     alert('Please select a PDF file');
@@ -213,7 +203,7 @@
                 
                 try {
                     progressContainer.classList.remove('hidden');
-                    progressBar.style.width = '20%';
+                    progressBar.style.width = '10%';
                     
                     const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
                     const fontSize = parseInt(document.getElementById('fontSize').value);
@@ -221,9 +211,9 @@
                     const angle = parseInt(document.getElementById('rotation').value);
                     const colorHex = document.getElementById('color').value;
                     
-                    console.log('Adding watermark with:', { text, fontSize, opacity, angle, colorHex });
+                    console.log('Adding watermark:', { text, fontSize, opacity, angle, colorHex });
                     
-                    progressBar.style.width = '40%';
+                    progressBar.style.width = '30%';
                     
                     // Load PDF
                     const arrayBuffer = await currentFile.arrayBuffer();
@@ -262,13 +252,19 @@
                     
                     console.log('Watermark added, blob size:', watermarkedBlob.size);
                     
+                    // Create blob URL for preview
+                    if (blobUrl) URL.revokeObjectURL(blobUrl);
+                    blobUrl = URL.createObjectURL(watermarkedBlob);
+                    
+                    // Show preview in iframe
+                    pdfPreview.innerHTML = `<iframe src="${blobUrl}#toolbar=0&navpanes=0" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                    
                     // Show result
                     watermarkOptions.classList.add('hidden');
-                    actions.classList.add('hidden');
                     resultSection.classList.remove('hidden');
                     
                     progressBar.style.width = '100%';
-                    alert('Watermark added successfully!');
+                    alert('Watermark added! You can preview, edit, or download below.');
                     
                 } catch (error) {
                     console.error('Error:', error);
@@ -279,6 +275,12 @@
                         progressBar.style.width = '0%';
                     }, 1000);
                 }
+            });
+            
+            // Edit button - go back to settings
+            document.getElementById('editBtn').addEventListener('click', () => {
+                resultSection.classList.add('hidden');
+                watermarkOptions.classList.remove('hidden');
             });
             
             // Download button
@@ -300,10 +302,14 @@
             document.getElementById('newFileBtn').addEventListener('click', () => {
                 resultSection.classList.add('hidden');
                 watermarkOptions.classList.remove('hidden');
-                actions.classList.remove('hidden');
                 watermarkedBlob = null;
                 currentFile = null;
                 fileInput.value = '';
+                pdfPreview.innerHTML = '';
+                if (blobUrl) {
+                    URL.revokeObjectURL(blobUrl);
+                    blobUrl = null;
+                }
             });
             
             document.getElementById('darkModeToggle').addEventListener('click', () => {
