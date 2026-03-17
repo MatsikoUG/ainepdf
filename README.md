@@ -13,7 +13,7 @@ AinePdf is a **completely free, browser-based PDF toolkit** that allows you to m
 - **Split PDF** - Extract pages or split into multiple files
 - **Compress PDF** - Reduce file size while maintaining quality
 - **Extract Pages** - Pull specific pages from a PDF
-- **Edit PDF** - Add text, shapes, and annotations
+- **Edit PDF** - Add text, shapes, images, and annotations. Features include drag-and-drop repositioning, width/height sliders for images, page management (delete/add pages), zoom controls (50%-300%), and direct file drop onto canvas
 - **Rotate PDF** - Rotate pages by 90°, 180°, or 270°
 
 ### Convert
@@ -23,7 +23,7 @@ AinePdf is a **completely free, browser-based PDF toolkit** that allows you to m
 - **Images to PDF** - Combine multiple images into PDF
 
 ### Security & Other
-- **Add Watermark** - Add text watermark to PDFs
+- **Add Watermark** - Add text watermark to PDFs with preview and download functionality
 - **Add Page Numbers** - Number pages in your PDF
 - **Unlock PDF** - Remove password protection (with known password)
 
