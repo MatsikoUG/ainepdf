@@ -123,128 +123,133 @@
     <!-- Social Bar Ad Unit -->
     <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const qrContent = document.getElementById('qrContent');
-            const qrSize = document.getElementById('qrSize');
-            const sizeValue = document.getElementById('sizeValue');
-            const errorCorrection = document.getElementById('errorCorrection');
-            const generateBtn = document.getElementById('generateBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const qrPreview = document.getElementById('qrPreview');
-            const qrCodeContainer = document.getElementById('qrCodeContainer');
-            const downloadPngBtn = document.getElementById('downloadPngBtn');
-            const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+     <script>
+         document.addEventListener('DOMContentLoaded', () => {
+             const qrContent = document.getElementById('qrContent');
+             const qrSize = document.getElementById('qrSize');
+             const sizeValue = document.getElementById('sizeValue');
+             const errorCorrection = document.getElementById('errorCorrection');
+             const generateBtn = document.getElementById('generateBtn');
+             const clearBtn = document.getElementById('clearBtn');
+             const qrPreview = document.getElementById('qrPreview');
+             const qrCodeContainer = document.getElementById('qrCodeContainer');
+             const downloadPngBtn = document.getElementById('downloadPngBtn');
+             const downloadSvgBtn = document.getElementById('downloadSvgBtn');
 
-            // Update size display
-            qrSize.addEventListener('input', () => {
-                sizeValue.textContent = qrSize.value;
-            });
+             // Update size display
+             qrSize.addEventListener('input', () => {
+                 sizeValue.textContent = qrSize.value;
+             });
 
-            // Generate QR code
-            generateBtn.addEventListener('click', () => {
-                const content = qrContent.value.trim();
-                if (!content) {
-                    AinePdf.showToast('Please enter content for the QR code', 'error');
-                    return;
-                }
+             // Generate QR code
+             generateBtn.addEventListener('click', () => {
+                 const content = qrContent.value.trim();
+                 if (!content) {
+                     AinePdf.showToast('Please enter content for the QR code', 'error');
+                     return;
+                 }
 
-                const size = parseInt(qrSize.value);
-                const ecLevel = errorCorrection.value;
+                 const size = parseInt(qrSize.value);
+                 const ecLevel = errorCorrection.value;
 
-                try {
-                    // Using QRCode.js library via CDN
-                    if (typeof QRCode === 'undefined') {
-                        // Load QRCode.js dynamically
-                        const script = document.createElement('script');
-                        script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
-                        script.onload = () => generateQRCode(content, size, ecLevel);
-                        document.head.appendChild(script);
-                    } else {
-                        generateQRCode(content, size, ecLevel);
-                    }
-                } catch (error) {
-                    AinePdf.showToast('Error generating QR code: ' + error.message, 'error');
-                }
-            });
+                 // Load QRCode.js if needed and generate QR code
+                 if (typeof QRCode === 'undefined') {
+                     // Load QRCode.js dynamically
+                     const script = document.createElement('script');
+                     script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js';
+                     script.onload = () => {
+                         generateQRCode(content, size, ecLevel);
+                     };
+                     script.onerror = () => {
+                         AinePdf.showToast('Failed to load QR code library', 'error');
+                     };
+                     document.head.appendChild(script);
+                 } else {
+                     generateQRCode(content, size, ecLevel);
+                 }
+             });
 
-            function generateQRCode(content, size, ecLevel) {
-                // Clear previous QR code
-                qrCodeContainer.innerHTML = '';
+             function generateQRCode(content, size, ecLevel) {
+                 // Clear previous QR code
+                 qrCodeContainer.innerHTML = '';
 
-                // Create QR code
-                const qr = new QRCode(qrCodeContainer, {
-                    text: content,
-                    width: size,
-                    height: size,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel[ecLevel]
-                });
+                 try {
+                     // Create QR code
+                     const qr = new QRCode(qrCodeContainer, {
+                         text: content,
+                         width: size,
+                         height: size,
+                         colorDark: "#000000",
+                         colorLight: "#ffffff",
+                         correctLevel: QRCode.CorrectLevel[ecLevel]
+                     });
 
-                // Show preview
-                qrPreview.classList.remove('hidden');
+                     // Show preview
+                     qrPreview.classList.remove('hidden');
 
-                // Set up download buttons
-                setupDownloadButtons(content, size, ecLevel);
-            }
+                     // Set up download buttons
+                     setupDownloadButtons(content, size, ecLevel);
+                 } catch (error) {
+                     AinePdf.showToast('Error generating QR code: ' + error.message, 'error');
+                 }
+             }
 
-            function setupDownloadButtons(content, size, ecLevel) {
-                // For PNG download
-                downloadPngBtn.onclick = () => {
-                    // Create a temporary canvas to get the image
-                    const tempCanvas = document.createElement('canvas');
-                    const tempCtx = tempCanvas.getContext('2d');
-                    tempCanvas.width = size;
-                    tempCanvas.height = size;
+             function setupDownloadButtons(content, size, ecLevel) {
+                 // For PNG download
+                 downloadPngBtn.onclick = () => {
+                     // Create a temporary canvas to get the image
+                     const tempCanvas = document.createElement('canvas');
+                     const tempCtx = tempCanvas.getContext('2d');
+                     tempCanvas.width = size;
+                     tempCanvas.height = size;
 
-                    // Draw QR code on canvas
-                    const tempQR = new QRCode(tempCanvas, {
-                        text: content,
-                        width: size,
-                        height: size,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel[ecLevel]
-                    });
+                     // Draw QR code on canvas
+                     const tempQR = new QRCode(tempCanvas, {
+                         text: content,
+                         width: size,
+                         height: size,
+                         colorDark: "#000000",
+                         colorLight: "#ffffff",
+                         correctLevel: QRCode.CorrectLevel[ecLevel]
+                     });
 
-                    // Give it a moment to render
-                    setTimeout(() => {
-                        const image = tempCanvas.toDataURL('image/png');
-                        const link = document.createElement('a');
-                        link.download = 'qrcode.png';
-                        link.href = image;
-                        link.click();
-                    }, 100);
-                };
+                     // Give it a moment to render
+                     setTimeout(() => {
+                         const image = tempCanvas.toDataURL('image/png');
+                         const link = document.createElement('a');
+                         link.download = 'qrcode.png';
+                         link.href = image;
+                         link.click();
+                     }, 100);
+                 };
 
-                // For SVG download (simplified approach)
-                downloadSvgBtn.onclick = () => {
-                    // Create SVG markup
-                    const svgData = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
-                            <rect width="100%" height="100%" fill="white"/>
-                            <!-- QR code path would go here - for simplicity, we'll generate a basic one -->
-                            <!-- In a production app, you'd use a proper QR code to SVG library -->
-                        </svg>
-                    `;
-                    
-                    // For now, we'll fall back to PNG since SVG generation is complex
-                    AinePdf.showToast('SVG download coming soon! Use PNG for now.', 'info');
-                    downloadPngBtn.click();
-                };
-            }
+                 // For SVG download (simplified approach)
+                 downloadSvgBtn.onclick = () => {
+                     // Create SVG markup
+                     const svgData = `
+                         <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">
+                             <rect width="100%" height="100%" fill="white"/>
+                             <!-- QR code path would go here - for simplicity, we'll generate a basic one -->
+                             <!-- In a production app, you'd use a proper QR code to SVG library -->
+                         </svg>
+                     `;
+                     
+                     // For now, we'll fall back to PNG since SVG generation is complex
+                     AinePdf.showToast('SVG download coming soon! Use PNG for now.', 'info');
+                     downloadPngBtn.click();
+                 };
+             }
 
-            // Clear button
-            clearBtn.addEventListener('click', () => {
-                qrContent.value = '';
-                qrSize.value = 250;
-                sizeValue.textContent = '250';
-                errorCorrection.value = 'M';
-                qrPreview.classList.add('hidden');
-                qrCodeContainer.innerHTML = '';
-            });
-        });
-    </script>
+             // Clear button
+             clearBtn.addEventListener('click', () => {
+                 qrContent.value = '';
+                 qrSize.value = 250;
+                 sizeValue.textContent = '250';
+                 errorCorrection.value = 'M';
+                 qrPreview.classList.add('hidden');
+                 qrCodeContainer.innerHTML = '';
+             });
+         });
+     </script>
 </body>
 </html>
