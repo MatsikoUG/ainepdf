@@ -139,9 +139,13 @@ AinePdf/
 MIT License - Feel free to use this project for any purpose.
 
 ## 🤝 Contributing
-
+ 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
+ 
+## 📧 Contact
+ 
+For support or inquiries, please contact: calvinkellermantechnologies@gmail.com
+ 
 ---
-
+ 
 <p align="center">Made with ❤️ for privacy</p>
