@@ -21,11 +21,17 @@ AinePdf is a **completely free, browser-based PDF toolkit** that allows you to m
 - **PDF to PNG** - Convert PDF pages to PNG images
 - **JPG to PDF** - Convert images to PDF document
 - **Images to PDF** - Combine multiple images into PDF
+- **Convert Tools** - All-in-one converter for PDF/JPG/PNG with multiple file support
 
 ### Security & Other
 - **Add Watermark** - Add text watermark to PDFs with preview and download functionality
 - **Add Page Numbers** - Number pages in your PDF
 - **Unlock PDF** - Remove password protection (with known password)
+
+### Monetization & SEO
+- **SEO Optimized Pages** - Individual tool pages targeting specific keywords
+- **Ad Integration** - Adsterra and Google AdSense ready placements
+- **Fast Loading** - Optimized for SEO and user retention
 
 ## 🔒 Privacy First
 
