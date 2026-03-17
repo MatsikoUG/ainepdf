@@ -6,8 +6,6 @@
     <title>Add Watermark – AinePdf</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../css/styles.css">
-    <!-- PDF.js for preview -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
@@ -80,29 +78,53 @@
             </div>
         </div>
 
-        <!-- Preview Section - Appears immediately below settings after watermark is added -->
-        <div id="previewSection" class="hidden">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Watermarked PDF Preview</h2>
-                
-                <!-- Image Preview Container -->
-                <div id="watermarkPreview" class="mb-6 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden flex justify-center">
-                    <p class="text-gray-500 p-4">Loading preview...</p>
+        <!-- Result Section -->
+        <div id="resultSection" class="hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
+                <!-- Success Icon -->
+                <div class="mb-6">
+                    <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                 </div>
                 
-                <!-- Download Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button id="downloadWatermarkBtn" class="btn-primary px-6 py-3">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                        </svg>
-                        Download Watermarked PDF
-                    </button>
-                    <button id="newWatermarkBtn" class="btn-secondary px-6 py-3">
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        New File
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Watermark Added!</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Your PDF has been watermarked successfully.</p>
+                
+                <!-- File Info -->
+                <div id="fileInfo" class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Watermark settings used:</p>
+                    <div class="mt-2 grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-500">Text:</span>
+                            <span id="infoText" class="font-medium text-gray-900 dark:text-white"></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Font Size:</span>
+                            <span id="infoFontSize" class="font-medium text-gray-900 dark:text-white"></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Opacity:</span>
+                            <span id="infoOpacity" class="font-medium text-gray-900 dark:text-white"></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Rotation:</span>
+                            <span id="infoRotation" class="font-medium text-gray-900 dark:text-white"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Download Button -->
+                <button id="downloadBtn" class="btn-primary px-8 py-3 text-lg">
+                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    Download Watermarked PDF
+                </button>
+                
+                <div class="mt-4">
+                    <button id="newFileBtn" class="text-red-500 hover:text-red-600 text-sm">
+                        ← Add watermark to another file
                     </button>
                 </div>
             </div>
@@ -114,7 +136,7 @@
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark to PDF Online Free</h2>
         <p class="text-gray-600 dark:text-gray-300">
             AinePdf lets you add text watermarks to PDF files quickly and securely directly in your browser. 
-            Customize font size, opacity, rotation, and color with preview and download functionality - no uploads or registration required.
+            Customize font size, opacity, rotation, and color - no uploads or registration required.
         </p>
     </div>
     
@@ -124,20 +146,17 @@
 
     <script src="../js/main.js"></script>
     <script>
-        // Set PDF.js worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        
         document.addEventListener('DOMContentLoaded', async () => {
             const dropZone = document.getElementById('dropZone');
             const watermarkOptions = document.getElementById('watermarkOptions');
             const actions = document.getElementById('actions');
-            const previewSection = document.getElementById('previewSection');
+            const resultSection = document.getElementById('resultSection');
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
-            const watermarkPreview = document.getElementById('watermarkPreview');
             
             let currentFile = null;
             let watermarkedBlob = null;
+            let currentOptions = {};
             
             // Update slider values
             ['fontSize', 'opacity', 'rotation'].forEach(id => {
@@ -153,8 +172,7 @@
                     currentFile = files[0];
                     watermarkOptions.classList.remove('hidden');
                     actions.classList.remove('hidden');
-                    // Reset preview
-                    previewSection.classList.add('hidden');
+                    resultSection.classList.add('hidden');
                     watermarkedBlob = null;
                 }
             });
@@ -167,23 +185,28 @@
                   
                   try {
                       progressContainer.classList.remove('hidden');
-                      progressBar.style.width = '20%';
+                      progressBar.style.width = '10%';
                       
                       const pdfOps = new AinePdf.PdfOperations();
                       
                       const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
                       const fontSize = parseInt(document.getElementById('fontSize').value);
-                      const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                      const opacity = parseInt(document.getElementById('opacity').value);
                       const angle = parseInt(document.getElementById('rotation').value);
                       const colorHex = document.getElementById('color').value;
                       
-                      console.log('Adding watermark with options:', { text, fontSize, opacity, angle, colorHex });
+                      // Store current options for display
+                      currentOptions = { text, fontSize, opacity, angle };
+                      
+                      console.log('Adding watermark:', { text, fontSize, opacity, angle, colorHex });
                       
                       progressBar.style.width = '50%';
                       
                       // Add watermark
                       watermarkedBlob = await pdfOps.addWatermark(currentFile, text, {
-                          fontSize, opacity, angle,
+                          fontSize, 
+                          opacity: opacity / 100, 
+                          angle,
                           color: hexToRgb(colorHex)
                       });
                       
@@ -191,21 +214,19 @@
                       
                       progressBar.style.width = '80%';
                       
-                      // Show preview section
+                      // Hide options, show result
                       watermarkOptions.classList.add('hidden');
                       actions.classList.add('hidden');
-                      previewSection.classList.remove('hidden');
+                      resultSection.classList.remove('hidden');
                       
-                      // Create preview
-                      await createPreview(watermarkedBlob);
+                      // Update info display
+                      document.getElementById('infoText').textContent = text;
+                      document.getElementById('infoFontSize').textContent = fontSize + 'px';
+                      document.getElementById('infoOpacity').textContent = opacity + '%';
+                      document.getElementById('infoRotation').textContent = angle + '°';
                       
                       progressBar.style.width = '100%';
                       AinePdf.showToast('Watermark added successfully!', 'success');
-                      
-                      // Scroll to preview
-                      setTimeout(() => {
-                          previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                      }, 200);
                       
                   } catch (error) {
                       console.error('Error adding watermark:', error);
@@ -218,91 +239,26 @@
                   }
               });
              
-             // Download watermarked PDF
-             document.getElementById('downloadWatermarkBtn').addEventListener('click', async () => {
-                 if (!watermarkedBlob) {
-                     // Regenerate if needed
-                     try {
-                         progressContainer.classList.remove('hidden');
-                         const pdfOps = new AinePdf.PdfOperations();
-                         
-                         const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
-                         const fontSize = parseInt(document.getElementById('fontSize').value);
-                         const opacity = parseInt(document.getElementById('opacity').value) / 100;
-                         const angle = parseInt(document.getElementById('rotation').value);
-                         const colorHex = document.getElementById('color').value;
-                         
-                         watermarkedBlob = await pdfOps.addWatermark(currentFile, text, {
-                             fontSize, opacity, angle,
-                             color: hexToRgb(colorHex)
-                         });
-                     } catch (error) {
-                         AinePdf.showToast('Error: ' + error.message, 'error');
-                         return;
-                     }
+             // Download button
+             document.getElementById('downloadBtn').addEventListener('click', () => {
+                 if (watermarkedBlob) {
+                     AinePdf.downloadBlob(watermarkedBlob, 'watermarked.pdf');
+                     AinePdf.showToast('Download started!', 'success');
                  }
-                 
-                 AinePdf.downloadBlob(watermarkedBlob, 'watermarked.pdf');
-                 AinePdf.showToast('Download started!', 'success');
              });
              
              // New file button
-             document.getElementById('newWatermarkBtn').addEventListener('click', () => {
-                 location.reload();
+             document.getElementById('newFileBtn').addEventListener('click', () => {
+                 resultSection.classList.add('hidden');
+                 watermarkOptions.classList.remove('hidden');
+                 actions.classList.remove('hidden');
+                 watermarkedBlob = null;
+                 currentFile = null;
              });
             
              function hexToRgb(hex) {
                  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
                  return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
-             }
-             
-             // Create preview by rendering first page as image
-             async function createPreview(pdfBlob) {
-                 try {
-                     watermarkPreview.innerHTML = '<p class="text-gray-500 p-4">Generating preview...</p>';
-                     
-                     // Load PDF from blob
-                     const arrayBuffer = await pdfBlob.arrayBuffer();
-                     const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                     
-                     // Get first page
-                     const page = await pdfDoc.getPage(1);
-                     const scale = 1.5;
-                     const viewport = page.getViewport({ scale });
-                     
-                     // Create canvas
-                     const canvas = document.createElement('canvas');
-                     const context = canvas.getContext('2d');
-                     canvas.height = viewport.height;
-                     canvas.width = viewport.width;
-                     
-                     // Render page
-                     await page.render({
-                         canvasContext: context,
-                         viewport: viewport
-                     }).promise;
-                     
-                     // Display as image
-                     watermarkPreview.innerHTML = '';
-                     const img = document.createElement('img');
-                     img.src = canvas.toDataURL('image/png');
-                     img.style.maxWidth = '100%';
-                     img.style.height = 'auto';
-                     img.style.display = 'block';
-                     img.alt = 'Watermarked PDF Preview';
-                     watermarkPreview.appendChild(img);
-                     
-                     console.log('Preview generated successfully');
-                     
-                 } catch (error) {
-                     console.error('Error creating preview:', error);
-                     watermarkPreview.innerHTML = `
-                         <div class="text-center p-4">
-                             <p class="text-red-500 mb-2">Could not generate preview</p>
-                             <p class="text-gray-500 text-sm">But your watermark has been added! Click download to get your file.</p>
-                         </div>
-                     `;
-                 }
              }
             
             document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
