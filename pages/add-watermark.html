@@ -21,28 +21,13 @@
         </div>
     </nav>
 
-     <main class="max-w-3xl mx-auto px-4 py-12">
-         <div class="text-center mb-8">
-             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
-             <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
-         </div>
-         
-         <!-- Preview Section -->
-         <div id="previewSection" class="hidden">
-             <div class="space-y-6">
-                 <div>
-                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
-                     <div id="watermarkPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                         <!-- PDF preview will be rendered here -->
-                     </div>
-                 </div>
-                 <div id="watermarkActions" class="flex flex-col sm:flex-row gap-4 justify-center">
-                     <button id="downloadWatermarkBtn" class="btn-primary">Download Watermarked PDF</button>
-                     <button id="newWatermarkBtn" class="btn-secondary">New File</button>
-                 </div>
-             </div>
-         </div>
-
+    <main class="max-w-3xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark</h1>
+            <p class="text-gray-600 dark:text-gray-300">Add text watermark to your PDF documents.</p>
+        </div>
+        
+        <!-- Drop Zone -->
         <div id="dropZone" class="drop-zone mb-8">
             <svg class="drop-zone-icon w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -50,7 +35,8 @@
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF here</p>
         </div>
 
-        <div id="watermarkOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+        <!-- Watermark Options -->
+        <div id="watermarkOptions" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
             <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Watermark Settings</h3>
             <div class="space-y-4">
                 <div>
@@ -76,6 +62,12 @@
             </div>
         </div>
 
+        <!-- Actions -->
+        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <button id="watermarkBtn" class="btn-primary">Add Watermark</button>
+        </div>
+
+        <!-- Progress Container -->
         <div id="progressContainer" class="hidden mb-8">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
                 <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
@@ -84,33 +76,45 @@
             </div>
         </div>
 
-        <div id="actions" class="hidden flex flex-col sm:flex-row gap-4 justify-center">
-            <button id="watermarkBtn" class="btn-primary">Add Watermark</button>
+        <!-- Preview Section - Appears immediately below settings after watermark is added -->
+        <div id="previewSection" class="hidden">
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
+                    <div id="watermarkPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+                        <!-- PDF preview will be rendered here -->
+                    </div>
+                </div>
+                <div id="watermarkActions" class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="downloadWatermarkBtn" class="btn-primary">Download Watermarked PDF</button>
+                    <button id="newWatermarkBtn" class="btn-secondary">New File</button>
+                </div>
+            </div>
         </div>
     </main>
 
-     <!-- SEO Content -->
-     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8">
-         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark to PDF Online Free</h2>
-         <p class="text-gray-600 dark:text-gray-300">
-             AinePdf lets you add text watermarks to PDF files quickly and securely directly in your browser. 
-             Customize font size, opacity, rotation, and color with preview and download functionality - no uploads or registration required.
-         </p>
-     </div>
-     
-     <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
-         <p>© 2024 AinePdf. Files processed locally.</p>
-     </footer>
+    <!-- SEO Content -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Add Watermark to PDF Online Free</h2>
+        <p class="text-gray-600 dark:text-gray-300">
+            AinePdf lets you add text watermarks to PDF files quickly and securely directly in your browser. 
+            Customize font size, opacity, rotation, and color with preview and download functionality - no uploads or registration required.
+        </p>
+    </div>
+    
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Files processed locally.</p>
+    </footer>
 
     <script src="../js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-    const dropZone = document.getElementById('dropZone');
-    const watermarkOptions = document.getElementById('watermarkOptions');
-    const actions = document.getElementById('actions');
-    const previewSection = document.getElementById('previewSection');
-    const progressContainer = document.getElementById('progressContainer');
-    const progressBar = document.getElementById('progressBar');
+            const dropZone = document.getElementById('dropZone');
+            const watermarkOptions = document.getElementById('watermarkOptions');
+            const actions = document.getElementById('actions');
+            const previewSection = document.getElementById('previewSection');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
             
             let currentFile = null;
             
@@ -152,19 +156,18 @@
                       console.log('Watermark process completed, result type:', typeof result);
                       console.log('Result is Blob:', result instanceof Blob);
                       
-                    // Show preview using important style to override any CSS rules
-                    watermarkOptions.classList.add('hidden');
-                    actions.classList.add('hidden');
-                    console.log('About to show previewSection');
-                    previewSection.classList.remove('hidden');
-                    previewSection.style.setProperty('display', 'block', 'important');
-                    console.log('previewSection classList after removing hidden:', previewSection.classList);
-                    console.log('previewSection is actually hidden:', previewSection.classList.contains('hidden'));
-                    console.log('previewSection style.display:', previewSection.style.display);
-                    console.log('previewSection computed display:', window.getComputedStyle(previewSection).display);
+                      // Show preview
+                      watermarkOptions.classList.add('hidden');
+                      actions.classList.add('hidden');
+                      previewSection.classList.remove('hidden');
                       
                       // Create preview using PDF.js
                       await createWatermarkPreview(result);
+                      
+                      // Scroll to preview
+                      setTimeout(() => {
+                          previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                      }, 100);
                       
                       progressBar.style.width = '100%';
                       AinePdf.showToast('Watermark added!', 'success');
@@ -233,19 +236,10 @@
                            ></iframe>
                        `;
                        console.log('Preview iframe created');
-                       
-                       // Also show the preview section explicitly with important style
-                       previewSection.style.setProperty('display', 'block', 'important');
-                       previewSection.classList.remove('hidden');
-                       console.log('Preview section forced to show');
-                       console.log('previewSection computed display:', window.getComputedStyle(previewSection).display);
                    } catch (error) {
                        console.error('Error creating preview:', error);
                        const previewContainer = document.getElementById('watermarkPreview');
                        previewContainer.innerHTML = `<p class="text-red-500">Error generating preview</p>`;
-                       // Still try to show the section even if there's an error
-                       previewSection.style.setProperty('display', 'block', 'important');
-                       previewSection.classList.remove('hidden');
                    }
                }
             
@@ -253,11 +247,11 @@
              if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
                  document.documentElement.classList.add('dark');
              }
-         });
-     </script>
-     <!-- Popunder Ad Unit (one per page) -->
-     <script src="https://pl28930473.effectivegatecpm.com/04/ac/c2/04acc2344ed019ba38e63d0153b521b2.js"></script>
-     <!-- Social Bar Ad Unit -->
-     <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
- </body>
+        });
+    </script>
+    <!-- Popunder Ad Unit (one per page) -->
+    <script src="https://pl28930473.effectivegatecpm.com/04/ac/c2/04acc2344ed019ba38e63d0153b521b2.js"></script>
+    <!-- Social Bar Ad Unit -->
+    <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
+</body>
 </html>
