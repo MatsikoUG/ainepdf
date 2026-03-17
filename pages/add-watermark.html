@@ -6,6 +6,8 @@
     <title>Add Watermark – AinePdf</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../css/styles.css">
+    <!-- pdf-lib for PDF operations -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
@@ -34,6 +36,7 @@
             </svg>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-2">Drag & drop your PDF here</p>
             <p class="text-sm text-gray-500">or click to browse</p>
+            <input type="file" id="fileInput" accept=".pdf" class="hidden">
         </div>
 
         <!-- Watermark Options -->
@@ -81,7 +84,6 @@
         <!-- Result Section -->
         <div id="resultSection" class="hidden">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
-                <!-- Success Icon -->
                 <div class="mb-6">
                     <svg class="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -91,30 +93,6 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Watermark Added!</h2>
                 <p class="text-gray-600 dark:text-gray-300 mb-6">Your PDF has been watermarked successfully.</p>
                 
-                <!-- File Info -->
-                <div id="fileInfo" class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 mb-6">
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Watermark settings used:</p>
-                    <div class="mt-2 grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span class="text-gray-500">Text:</span>
-                            <span id="infoText" class="font-medium text-gray-900 dark:text-white"></span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Font Size:</span>
-                            <span id="infoFontSize" class="font-medium text-gray-900 dark:text-white"></span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Opacity:</span>
-                            <span id="infoOpacity" class="font-medium text-gray-900 dark:text-white"></span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Rotation:</span>
-                            <span id="infoRotation" class="font-medium text-gray-900 dark:text-white"></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Download Button -->
                 <button id="downloadBtn" class="btn-primary px-8 py-3 text-lg">
                     <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -144,10 +122,31 @@
         <p>© 2024 AinePdf. Files processed locally.</p>
     </footer>
 
-    <script src="../js/main.js"></script>
     <script>
+        // Wait for PDF-lib to load
         document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for pdf-lib to be available
+            if (typeof PDFLib === 'undefined') {
+                console.log('Waiting for PDF-lib to load...');
+                await new Promise(resolve => {
+                    const checkLib = setInterval(() => {
+                        if (typeof PDFLib !== 'undefined') {
+                            clearInterval(checkLib);
+                            resolve();
+                        }
+                    }, 100);
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        clearInterval(checkLib);
+                        resolve();
+                    }, 10000);
+                });
+            }
+            
+            console.log('PDF-lib loaded:', typeof PDFLib);
+            
             const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
             const watermarkOptions = document.getElementById('watermarkOptions');
             const actions = document.getElementById('actions');
             const resultSection = document.getElementById('resultSection');
@@ -156,7 +155,6 @@
             
             let currentFile = null;
             let watermarkedBlob = null;
-            let currentOptions = {};
             
             // Update slider values
             ['fontSize', 'opacity', 'rotation'].forEach(id => {
@@ -165,109 +163,159 @@
                 });
             });
             
-            new AinePdf.DropZone(dropZone, {
-                accept: ['.pdf'],
-                maxFiles: 1,
-                onFilesSelected: (files) => {
-                    currentFile = files[0];
+            // Click on drop zone to browse
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFiles(e.target.files);
+                }
+            });
+            
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            function handleFiles(files) {
+                const file = files[0];
+                if (file && file.name.toLowerCase().endsWith('.pdf')) {
+                    currentFile = file;
                     watermarkOptions.classList.remove('hidden');
                     actions.classList.remove('hidden');
                     resultSection.classList.add('hidden');
                     watermarkedBlob = null;
+                    console.log('File selected:', file.name);
+                } else {
+                    alert('Please select a PDF file');
+                }
+            }
+            
+            document.getElementById('watermarkBtn').addEventListener('click', async () => {
+                if (!currentFile) {
+                    alert('Please select a PDF file first');
+                    return;
+                }
+                
+                try {
+                    progressContainer.classList.remove('hidden');
+                    progressBar.style.width = '20%';
+                    
+                    const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
+                    const fontSize = parseInt(document.getElementById('fontSize').value);
+                    const opacity = parseInt(document.getElementById('opacity').value) / 100;
+                    const angle = parseInt(document.getElementById('rotation').value);
+                    const colorHex = document.getElementById('color').value;
+                    
+                    console.log('Adding watermark with:', { text, fontSize, opacity, angle, colorHex });
+                    
+                    progressBar.style.width = '40%';
+                    
+                    // Load PDF
+                    const arrayBuffer = await currentFile.arrayBuffer();
+                    progressBar.style.width = '50%';
+                    
+                    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                    progressBar.style.width = '60%';
+                    
+                    // Get font
+                    const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+                    
+                    // Add watermark to all pages
+                    const pages = pdfDoc.getPages();
+                    for (const page of pages) {
+                        const { width, height } = page.getSize();
+                        page.drawText(text, {
+                            x: width / 2 - (text.length * fontSize) / 4,
+                            y: height / 2,
+                            size: fontSize,
+                            font: helveticaFont,
+                            color: PDFLib.rgb(
+                                parseInt(colorHex.slice(1,3), 16) / 255,
+                                parseInt(colorHex.slice(3,5), 16) / 255,
+                                parseInt(colorHex.slice(5,7), 16) / 255
+                            ),
+                            opacity: opacity,
+                            rotate: PDFLib.degrees(angle)
+                        });
+                    }
+                    
+                    progressBar.style.width = '80%';
+                    
+                    // Save PDF
+                    const pdfBytes = await pdfDoc.save();
+                    watermarkedBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+                    
+                    console.log('Watermark added, blob size:', watermarkedBlob.size);
+                    
+                    // Show result
+                    watermarkOptions.classList.add('hidden');
+                    actions.classList.add('hidden');
+                    resultSection.classList.remove('hidden');
+                    
+                    progressBar.style.width = '100%';
+                    alert('Watermark added successfully!');
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                } finally {
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                        progressBar.style.width = '0%';
+                    }, 1000);
                 }
             });
             
-            document.getElementById('watermarkBtn').addEventListener('click', async () => {
-                  if (!currentFile) {
-                      AinePdf.showToast('Please select a PDF file first', 'error');
-                      return;
-                  }
-                  
-                  try {
-                      progressContainer.classList.remove('hidden');
-                      progressBar.style.width = '10%';
-                      
-                      const pdfOps = new AinePdf.PdfOperations();
-                      
-                      const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
-                      const fontSize = parseInt(document.getElementById('fontSize').value);
-                      const opacity = parseInt(document.getElementById('opacity').value);
-                      const angle = parseInt(document.getElementById('rotation').value);
-                      const colorHex = document.getElementById('color').value;
-                      
-                      // Store current options for display
-                      currentOptions = { text, fontSize, opacity, angle };
-                      
-                      console.log('Adding watermark:', { text, fontSize, opacity, angle, colorHex });
-                      
-                      progressBar.style.width = '50%';
-                      
-                      // Add watermark
-                      watermarkedBlob = await pdfOps.addWatermark(currentFile, text, {
-                          fontSize, 
-                          opacity: opacity / 100, 
-                          angle,
-                          color: hexToRgb(colorHex)
-                      });
-                      
-                      console.log('Watermark added, blob size:', watermarkedBlob.size);
-                      
-                      progressBar.style.width = '80%';
-                      
-                      // Hide options, show result
-                      watermarkOptions.classList.add('hidden');
-                      actions.classList.add('hidden');
-                      resultSection.classList.remove('hidden');
-                      
-                      // Update info display
-                      document.getElementById('infoText').textContent = text;
-                      document.getElementById('infoFontSize').textContent = fontSize + 'px';
-                      document.getElementById('infoOpacity').textContent = opacity + '%';
-                      document.getElementById('infoRotation').textContent = angle + '°';
-                      
-                      progressBar.style.width = '100%';
-                      AinePdf.showToast('Watermark added successfully!', 'success');
-                      
-                  } catch (error) {
-                      console.error('Error adding watermark:', error);
-                      AinePdf.showToast('Error: ' + error.message, 'error');
-                  } finally {
-                      setTimeout(() => {
-                          progressContainer.classList.add('hidden');
-                          progressBar.style.width = '0%';
-                      }, 1000);
-                  }
-              });
-             
-             // Download button
-             document.getElementById('downloadBtn').addEventListener('click', () => {
-                 if (watermarkedBlob) {
-                     AinePdf.downloadBlob(watermarkedBlob, 'watermarked.pdf');
-                     AinePdf.showToast('Download started!', 'success');
-                 }
-             });
-             
-             // New file button
-             document.getElementById('newFileBtn').addEventListener('click', () => {
-                 resultSection.classList.add('hidden');
-                 watermarkOptions.classList.remove('hidden');
-                 actions.classList.remove('hidden');
-                 watermarkedBlob = null;
-                 currentFile = null;
-             });
+            // Download button
+            document.getElementById('downloadBtn').addEventListener('click', () => {
+                if (watermarkedBlob) {
+                    const url = URL.createObjectURL(watermarkedBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'watermarked.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    alert('Download started!');
+                }
+            });
             
-             function hexToRgb(hex) {
-                 const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                 return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [128, 128, 128];
-             }
+            // New file button
+            document.getElementById('newFileBtn').addEventListener('click', () => {
+                resultSection.classList.add('hidden');
+                watermarkOptions.classList.remove('hidden');
+                actions.classList.remove('hidden');
+                watermarkedBlob = null;
+                currentFile = null;
+                fileInput.value = '';
+            });
             
-            document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
-             if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                 document.documentElement.classList.add('dark');
-             }
+            document.getElementById('darkModeToggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+            
+            if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
         });
     </script>
-    <!-- Popunder Ad Unit (one per page) -->
+    <!-- Popunder Ad Unit -->
     <script src="https://pl28930473.effectivegatecpm.com/04/ac/c2/04acc2344ed019ba38e63d0153b521b2.js"></script>
     <!-- Social Bar Ad Unit -->
     <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
