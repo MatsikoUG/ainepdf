@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="../css/styles.css">
     <!-- pdf-lib for PDF operations -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- PDF.js for preview rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
     <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
@@ -65,7 +67,6 @@
                 </div>
             </div>
             
-            <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
                 <button id="watermarkBtn" class="btn-primary">Apply Watermark</button>
             </div>
@@ -74,14 +75,14 @@
         <!-- Progress Container -->
         <div id="progressContainer" class="hidden mb-8">
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Processing...</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2" id="progressText">Processing...</p>
                 <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
                     <div id="progressBar" class="h-full bg-red-500 rounded-full" style="width: 0%"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Result Section with Preview -->
+        <!-- Result Section -->
         <div id="resultSection" class="hidden">
             <!-- Action Buttons -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
@@ -107,11 +108,11 @@
                 </div>
             </div>
             
-            <!-- PDF Preview -->
+            <!-- PDF Preview as Images -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Preview</h3>
-                <div id="pdfPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden" style="height: 600px;">
-                    <!-- PDF iframe will be inserted here -->
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Preview (Page 1)</h3>
+                <div id="pdfPreview" class="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden flex justify-center items-center min-h-[400px]">
+                    <p class="text-gray-500">Generating preview...</p>
                 </div>
             </div>
         </div>
@@ -131,22 +132,19 @@
     </footer>
 
     <script>
+        // Set PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
         document.addEventListener('DOMContentLoaded', async () => {
-            // Wait for pdf-lib to be available
+            // Wait for pdf-lib
             if (typeof PDFLib === 'undefined') {
-                console.log('Waiting for PDF-lib to load...');
                 await new Promise(resolve => {
                     const checkLib = setInterval(() => {
-                        if (typeof PDFLib !== 'undefined') {
-                            clearInterval(checkLib);
-                            resolve();
-                        }
+                        if (typeof PDFLib !== 'undefined') { clearInterval(checkLib); resolve(); }
                     }, 100);
                     setTimeout(() => { clearInterval(checkLib); resolve(); }, 10000);
                 });
             }
-            
-            console.log('PDF-lib loaded:', typeof PDFLib);
             
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
@@ -154,11 +152,11 @@
             const resultSection = document.getElementById('resultSection');
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
             const pdfPreview = document.getElementById('pdfPreview');
             
             let currentFile = null;
             let watermarkedBlob = null;
-            let blobUrl = null;
             
             // Update slider values
             ['fontSize', 'opacity', 'rotation'].forEach(id => {
@@ -167,15 +165,9 @@
                 });
             });
             
-            // Click on drop zone to browse
+            // Drop zone events
             dropZone.addEventListener('click', () => fileInput.click());
-            
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) handleFiles(e.target.files);
-            });
-            
-            // Drag and drop
+            fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFiles(e.target.files); });
             dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
             dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
             dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
@@ -187,9 +179,6 @@
                     watermarkOptions.classList.remove('hidden');
                     resultSection.classList.add('hidden');
                     watermarkedBlob = null;
-                    if (blobUrl) URL.revokeObjectURL(blobUrl);
-                    blobUrl = null;
-                    console.log('File selected:', file.name);
                 } else {
                     alert('Please select a PDF file');
                 }
@@ -203,6 +192,7 @@
                 
                 try {
                     progressContainer.classList.remove('hidden');
+                    progressText.textContent = 'Adding watermark...';
                     progressBar.style.width = '10%';
                     
                     const text = document.getElementById('watermarkText').value || 'CONFIDENTIAL';
@@ -211,21 +201,15 @@
                     const angle = parseInt(document.getElementById('rotation').value);
                     const colorHex = document.getElementById('color').value;
                     
-                    console.log('Adding watermark:', { text, fontSize, opacity, angle, colorHex });
-                    
-                    progressBar.style.width = '30%';
-                    
                     // Load PDF
                     const arrayBuffer = await currentFile.arrayBuffer();
-                    progressBar.style.width = '50%';
+                    progressBar.style.width = '30%';
                     
                     const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-                    progressBar.style.width = '60%';
+                    progressBar.style.width = '50%';
                     
-                    // Get font
                     const helveticaFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
                     
-                    // Add watermark to all pages
                     const pages = pdfDoc.getPages();
                     for (const page of pages) {
                         const { width, height } = page.getSize();
@@ -244,27 +228,23 @@
                         });
                     }
                     
-                    progressBar.style.width = '80%';
+                    progressBar.style.width = '70%';
                     
-                    // Save PDF
                     const pdfBytes = await pdfDoc.save();
                     watermarkedBlob = new Blob([pdfBytes], { type: 'application/pdf' });
                     
-                    console.log('Watermark added, blob size:', watermarkedBlob.size);
+                    progressBar.style.width = '90%';
                     
-                    // Create blob URL for preview
-                    if (blobUrl) URL.revokeObjectURL(blobUrl);
-                    blobUrl = URL.createObjectURL(watermarkedBlob);
-                    
-                    // Show preview in iframe
-                    pdfPreview.innerHTML = `<iframe src="${blobUrl}#toolbar=0&navpanes=0" style="width: 100%; height: 100%; border: none;"></iframe>`;
-                    
-                    // Show result
+                    // Show result section
                     watermarkOptions.classList.add('hidden');
                     resultSection.classList.remove('hidden');
                     
+                    // Generate preview using PDF.js
+                    progressText.textContent = 'Generating preview...';
+                    await generatePreview(watermarkedBlob);
+                    
                     progressBar.style.width = '100%';
-                    alert('Watermark added! You can preview, edit, or download below.');
+                    progressText.textContent = 'Done!';
                     
                 } catch (error) {
                     console.error('Error:', error);
@@ -277,7 +257,40 @@
                 }
             });
             
-            // Edit button - go back to settings
+            async function generatePreview(blob) {
+                try {
+                    pdfPreview.innerHTML = '<p class="text-gray-500">Loading preview...</p>';
+                    
+                    const arrayBuffer = await blob.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const page = await pdf.getPage(1);
+                    
+                    const scale = 1.2;
+                    const viewport = page.getViewport({ scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    
+                    pdfPreview.innerHTML = '';
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL('image/png');
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                    img.alt = 'Watermarked PDF Preview';
+                    pdfPreview.appendChild(img);
+                    
+                } catch (error) {
+                    console.error('Preview error:', error);
+                    pdfPreview.innerHTML = '<p class="text-red-500">Could not generate preview. Click Download to get your file.</p>';
+                }
+            }
+            
+            // Edit button
             document.getElementById('editBtn').addEventListener('click', () => {
                 resultSection.classList.add('hidden');
                 watermarkOptions.classList.remove('hidden');
@@ -293,8 +306,6 @@
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    alert('Download started!');
                 }
             });
             
@@ -306,10 +317,6 @@
                 currentFile = null;
                 fileInput.value = '';
                 pdfPreview.innerHTML = '';
-                if (blobUrl) {
-                    URL.revokeObjectURL(blobUrl);
-                    blobUrl = null;
-                }
             });
             
             document.getElementById('darkModeToggle').addEventListener('click', () => {
