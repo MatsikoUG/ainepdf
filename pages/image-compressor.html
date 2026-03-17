@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor – AinePdf</title>
+    <meta name="description" content="Compress images online for free. Reduce file size while maintaining quality.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="../index.html" class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">AinePdf</span>
+            </a>
+            <div class="hidden md:flex space-x-1">
+                <a href="../index.html" class="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">All Tools</a>
+                <a href="image-compressor.html" class="px-3 py-2 text-sm text-red-500 bg-red-50">Image Compressor</a>
+            </div>
+            <button id="darkModeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <svg class="w-5 h-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                <svg class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- SEO Content -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Image Compressor Online Free</h2>
+        <p class="text-gray-600 dark:text-gray-300">
+            AinePdf lets you compress images quickly and securely directly in your browser. 
+            Reduce file size while maintaining quality with no uploads or registration required.
+        </p>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">Image Compressor</h1>
+            <p class="text-gray-600 dark:text-gray-300">Compress images while maintaining quality.</p>
+        </div>
+
+        <!-- Input Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mb-8">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Images</label>
+                    <input type="file" id="imageInput" accept="image/*" multiple class="w-full mb-4">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Supported formats: JPG, PNG, WebP, GIF</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quality</label>
+                        <input type="range" id="quality" min="10" max="100" value="80" class="w-full">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Quality: <span id="qualityValue">80</span>%</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Max Width</label>
+                        <input type="number" id="maxWidth" min="100" max="5000" value="1920" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty for no resizing</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="compressBtn" class="btn-primary px-6 py-3">Compress Images</button>
+                    <button id="clearBtn" class="btn-secondary px-6 py-3">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="previewSection" class="hidden space-y-6">
+            <div>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Preview</h2>
+                <div id="imagePreviews" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Image previews will be inserted here -->
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="downloadAllBtn" class="btn-primary px-6 py-3">Download All</button>
+                <button id="downloadZipBtn" class="btn-secondary px-6 py-3">Download as ZIP</button>
+                <button id="newCompressionBtn" class="btn-outline px-6 py-3">New Compression</button>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">How it works</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-2">
+                Simply select your images, adjust quality and resize options if needed, 
+                then click "Compress Images". Your images are processed instantly in your browser - no data is sent to any server.
+            </p>
+            <p class="text-gray-600 dark:text-gray-300">
+                All processing happens locally in your browser for complete privacy and security.
+            </p>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 dark:bg-gray-950 text-white py-8 mt-16 text-center text-sm text-gray-400">
+        <p>© 2024 AinePdf. Made with ❤️ for privacy.</p>
+        <div class="mt-2">
+            <!-- Ad Container -->
+            <div id="ad-container" class="w-full text-center">
+                <!-- Ad will be loaded here by the ad service -->
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="../pages/about.html" class="text-gray-300 hover:text-white mx-2">About</a>
+            <span class="mx-2 text-gray-500">|</span>
+            <a href="../pages/all-tools.html" class="text-gray-300 hover:text-white mx-2">All Tools</a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('darkModeToggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        if (localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <!-- Popunder Ad Unit (one per page) -->
+    <script src="https://pl28930473.effectivegatecpm.com/04/ac/c2/04acc2344ed019ba38e63d0153b521b2.js"></script>
+    <!-- Social Bar Ad Unit -->
+    <script src="https://pl28930494.effectivegatecpm.com/24/2f/cc/242fcc357d69bcfecf4cdb28cd9801d6.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const imageInput = document.getElementById('imageInput');
+            const quality = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const maxWidth = document.getElementById('maxWidth');
+            const compressBtn = document.getElementById('compressBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const previewSection = document.getElementById('previewSection');
+            const imagePreviews = document.getElementById('imagePreviews');
+            const downloadAllBtn = document.getElementById('downloadAllBtn');
+            const downloadZipBtn = document.getElementById('downloadZipBtn');
+            const newCompressionBtn = document.getElementById('newCompressionBtn');
+
+            // Update quality display
+            quality.addEventListener('input', () => {
+                qualityValue.textContent = quality.value;
+            });
+
+            // Compress images
+            compressBtn.addEventListener('click', async () => {
+                const files = imageInput.files;
+                if (files.length === 0) {
+                    AinePdf.showToast('Please select images to compress', 'error');
+                    return;
+                }
+
+                const qualityValue = parseInt(quality.value);
+                const maxWidthValue = maxWidth.value ? parseInt(maxWidth.value) : null;
+
+                try {
+                    compressBtn.disabled = true;
+                    previewSection.classList.add('hidden');
+                    imagePreviews.innerHTML = '';
+
+                    // Process each image
+                    const results = [];
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const result = await compressImage(file, qualityValue, maxWidthValue);
+                        results.push({
+                            original: file,
+                            compressed: result.blob,
+                            originalSize: file.size,
+                            compressedSize: result.blob.size,
+                            savings: result.savings
+                        });
+                    }
+
+                    // Show previews
+                    results.forEach((result, index) => {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden';
+                        
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(result.compressed);
+                        img.alt = `Compressed image ${index + 1}`;
+                        img.className = 'w-full h-48 object-cover';
+                        
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = 'p-4';
+                        
+                        const originalSizeKB = (result.originalSize / 1024).toFixed(1);
+                        const compressedSizeKB = (result.compressedSize / 1024).toFixed(1);
+                        const savingsPercent = result.savings.toFixed(1);
+                        
+                        infoDiv.innerHTML = `
+                            <p class="font-medium text-gray-900 dark:text-white mb-2">${result.original.name}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                                ${originalSizeKB} KB → ${compressedSizeKB} KB 
+                                (<span class="text-green-600">${savingsPercent}% saved</span>)
+                            </p>
+                        `;
+                        
+                        previewDiv.appendChild(img);
+                        previewDiv.appendChild(infoDiv);
+                        imagePreviews.appendChild(previewDiv);
+                    });
+
+                    previewSection.classList.remove('hidden');
+                    AinePdf.showToast(`Compressed ${files.length} image(s)!`, 'success');
+                } catch (error) {
+                    AinePdf.showToast('Error compressing images: ' + error.message, 'error');
+                } finally {
+                    compressBtn.disabled = false;
+                }
+            });
+
+            async function compressImage(file, quality, maxWidth) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Calculate dimensions
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (maxWidth && width > maxWidth) {
+                            const ratio = maxWidth / width;
+                            width = maxWidth;
+                            height = Math.round(height * ratio);
+                        }
+                        
+                        // Create canvas
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Draw image
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to blob
+                        canvas.toBlob((blob) => {
+                            const originalSize = file.size;
+                            const compressedSize = blob.size;
+                            const savings = ((originalSize - compressedSize) / originalSize) * 100;
+                            
+                            resolve({
+                                blob: blob,
+                                savings: Math.max(0, savings)
+                            });
+                        }, 'image/jpeg', quality / 100);
+                    };
+                    img.onerror = () => {
+                        reject(new Error('Failed to load image'));
+                    };
+                    img.src = URL.createObjectURL(file);
+                });
+            }
+
+            // Download all images
+            downloadAllBtn.addEventListener('click', () => {
+                // In a real implementation, this would download each image individually
+                // For simplicity, we'll show a toast
+                AinePdf.showToast('Individual download coming soon!', 'info');
+            });
+
+            // Download as ZIP (placeholder)
+            downloadZipBtn.addEventListener('click', () => {
+                AinePdf.showToast('ZIP download coming soon!', 'info');
+            });
+
+            // New compression button
+            newCompressionBtn.addEventListener('click', () => {
+                imageInput.value = '';
+                quality.value = 80;
+                qualityValue.textContent = '80';
+                maxWidth.value = '';
+                previewSection.classList.add('hidden');
+                imagePreviews.innerHTML = '';
+            });
+
+            // Clear button
+            clearBtn.addEventListener('click', () => {
+                imageInput.value = '';
+                quality.value = 80;
+                qualityValue.textContent = '80';
+                maxWidth.value = '';
+                previewSection.classList.add('hidden');
+                imagePreviews.innerHTML = '';
+            });
+        });
+    </script>
+</body>
+</html>

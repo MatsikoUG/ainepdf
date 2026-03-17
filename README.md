@@ -115,6 +115,8 @@ AinePdf/
     ├── extract-pages.html # Extract pages
     ├── unlock-pdf.html   # Unlock PDF tool
     ├── convert.html      # Convert tools listing
+    ├── qr-code-generator.html # QR Code Generator
+    ├── image-compressor.html # Image Compressor
     └── about.html        # About page
 ```
 
